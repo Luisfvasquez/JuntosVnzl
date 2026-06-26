@@ -9,9 +9,9 @@ use Illuminate\Support\Facades\Validator;
 
 class CountryAidController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $aids = CountryAid::all();
+        $aids = CountryAid::paginate($request->query('per_page', 15));
         return response()->json([
             'success' => true,
             'data' => $aids

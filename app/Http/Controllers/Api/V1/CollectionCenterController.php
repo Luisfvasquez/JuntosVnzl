@@ -9,9 +9,16 @@ use Illuminate\Support\Facades\Validator;
 
 class CollectionCenterController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $centers = CollectionCenter::with('supplies')->get();
+        $query = CollectionCenter::with('supplies');
+
+        if ($request->has('page') || $request->has('per_page')) {
+            $centers = $query->paginate($request->query('per_page', 15));
+        } else {
+            $centers = $query->get();
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Centros de acopio obtenidos',

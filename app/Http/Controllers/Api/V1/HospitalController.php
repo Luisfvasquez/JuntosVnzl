@@ -10,9 +10,14 @@ use Illuminate\Support\Facades\Validator;
 
 class HospitalController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $hospitals = Hospital::all();
+        if ($request->has('page') || $request->has('per_page')) {
+            $hospitals = Hospital::paginate($request->query('per_page', 15));
+        } else {
+            $hospitals = Hospital::all();
+        }
+
         return response()->json([
             'success' => true,
             'data' => $hospitals

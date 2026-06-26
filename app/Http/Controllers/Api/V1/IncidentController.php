@@ -9,9 +9,14 @@ use Illuminate\Support\Facades\Validator;
 
 class IncidentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $incidents = Incident::all();
+        if ($request->has('page') || $request->has('per_page')) {
+            $incidents = Incident::paginate($request->query('per_page', 15));
+        } else {
+            $incidents = Incident::all();
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Incidentes obtenidos',

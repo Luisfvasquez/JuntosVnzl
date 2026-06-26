@@ -33,7 +33,7 @@ class PatientController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $query->get()
+            'data' => $query->paginate($request->query('per_page', 15))
         ]);
     }
 

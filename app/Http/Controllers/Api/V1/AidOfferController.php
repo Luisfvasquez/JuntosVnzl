@@ -6,12 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAidOfferRequest;
 use App\Http\Requests\UpdateAidOfferRequest;
 use App\Models\AidOffer;
+use Illuminate\Http\Request;
 
 class AidOfferController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $offers = AidOffer::all();
+        $offers = AidOffer::paginate($request->query('per_page', 15));
         return response()->json([
             'success' => true,
             'message' => 'Ofertas obtenidas correctamente',
