@@ -108,7 +108,48 @@ Retorna todos los incidentes registrados para su renderizado en mapa.
 
 ---
 
-## 5. Autenticación (Fase II)
+## 5. Red de Salud y Pacientes (`/hospitals` y `/patients`)
+
+### Registrar Hospital/Centro (POST)
+**Endpoint:** `POST /api/v1/hospitals`
+*No requiere autenticación. Soporta subida de imágenes a Cloudflare R2.*
+**Cuerpo de la petición (FormData):**
+- `name` (string)
+- `type` (string): 'hospital_publico', 'clinica_privada', 'carpa_campana'
+- `latitude` (numeric)
+- `longitude` (numeric)
+- `address_description` (string)
+- `status` (string): 'operativo', 'colapsado', 'sin_insumos', 'evacuado'
+- `contact_phone` (string, opcional)
+- `image` (file, opcional, max: 5MB)
+
+### Listar Hospitales (GET)
+**Endpoint:** `GET /api/v1/hospitals`
+
+### Registrar Paciente Manualmente (POST)
+**Endpoint:** `POST /api/v1/patients`
+*No requiere autenticación. Soporta subida de imágenes a Cloudflare R2.*
+**Cuerpo de la petición (FormData):**
+- `hospital_id` (integer)
+- `dni` (string, opcional)
+- `first_name` (string, opcional)
+- `last_name` (string, opcional)
+- `approximate_age` (integer, opcional)
+- `physical_description` (string, opcional)
+- `medical_status` (string): 'estable', 'critico', 'observacion', 'dado_de_alta', 'fallecido', 'trasladado'
+- `photo` (file, opcional, max: 5MB)
+
+### Buscar Paciente (GET)
+**Endpoint:** `GET /api/v1/patients/search`
+*Permite buscar familiares.*
+**Query Params:**
+- `dni` (string)
+- `name` (string) - *Busca coincidencias parciales (ILIKE) en first_name o last_name.*
+- `description` (string) - *Busca coincidencias en physical_description.*
+
+---
+
+## 6. Autenticación (Fase II)
 
 * **Registro:** `POST /api/v1/auth/register` (Requiere `name`, `dni`, `phone`, `email`, `password`) - Retorna el `token` (JWT).
 * **Login:** `POST /api/v1/auth/login` (Requiere `dni`, `password`) - Retorna el `token` (JWT).

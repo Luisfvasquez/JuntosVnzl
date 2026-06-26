@@ -24,6 +24,13 @@ Route::prefix('v1')->group(function () {
     Route::post('/international-aid', [CountryAidController::class, 'store']);
     Route::get('/international-aid', [CountryAidController::class, 'index']);
 
+    // Módulo de Salud (Hospitales y Pacientes)
+    Route::post('/hospitals', [App\Http\Controllers\Api\V1\HospitalController::class, 'store']);
+    Route::get('/hospitals', [App\Http\Controllers\Api\V1\HospitalController::class, 'index']);
+
+    Route::get('/patients/search', [App\Http\Controllers\Api\V1\PatientController::class, 'search']);
+    Route::post('/patients', [App\Http\Controllers\Api\V1\PatientController::class, 'store']);
+
     // Endpoints que requieren 'secure_token' (Modificación/Eliminación)
     Route::middleware('App\Http\Middleware\CheckSecureToken')->group(function () {
         Route::put('/aid-offers/{id}', [AidOfferController::class, 'update']);
