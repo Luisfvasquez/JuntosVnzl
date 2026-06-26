@@ -2,66 +2,88 @@
 
 namespace Database\Seeders;
 
-use App\Models\Hospital;
 use Illuminate\Database\Seeder;
+use App\Models\Hospital;
 
 class HospitalSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     */
     public function run(): void
     {
-        Hospital::create([
-            'name' => 'Hospital Universitario de Caracas (HUC)',
-            'type' => 'hospital_publico',
-            'latitude' => 10.48910000,
-            'longitude' => -66.89030000,
-            'address_description' => 'Ciudad Universitaria, Los Chaguaramos. Entrada por el área de emergencias.',
-            'status' => 'operativo',
-            'contact_phone' => '+582126067111',
-            'image_url' => 'https://r2.juntosvnzl.org/hospitals/huc.jpg',
-        ]);
+        $hospitals = [
+            [
+                'name' => 'Hospital Universitario de Caracas',
+                'type' => 'hospital_publico',
+                'latitude' => 10.489115,
+                'longitude' => -66.890666,
+                'address_description' => 'Ciudad Universitaria de Caracas, UCV.',
+                'status' => 'operativo',
+            ],
+            [
+                'name' => 'Cruz Roja (Caracas)',
+                'type' => 'clinica_privada',
+                'latitude' => 10.505711,
+                'longitude' => -66.901511,
+                'address_description' => 'Av. Andrés Bello, San Bernardino, Caracas.',
+                'status' => 'operativo',
+            ],
+            [
+                'name' => 'Hospital Ricardo Baquero González (Periférico de Catia)',
+                'type' => 'hospital_publico',
+                'latitude' => 10.509743,
+                'longitude' => -66.948270,
+                'address_description' => 'Calle Nueva Esparta, Catia, Caracas.',
+                'status' => 'operativo',
+            ],
+            [
+                'name' => 'Hospital Dr. Domingo Luciani (El Llanito)',
+                'type' => 'hospital_publico',
+                'latitude' => 10.473551,
+                'longitude' => -66.811652,
+                'address_description' => 'Avenida Principal del Llanito, Petare.',
+                'status' => 'operativo',
+            ],
+            [
+                'name' => 'Hospital Dr. Miguel Pérez Carreño',
+                'type' => 'hospital_publico',
+                'latitude' => 10.467471,
+                'longitude' => -66.944322,
+                'address_description' => 'Urb. La Yaguara, Parroquia El Paraíso, Caracas.',
+                'status' => 'operativo',
+            ],
+            [
+                'name' => 'Hospital JM de los Ríos (Hospital de Niños)',
+                'type' => 'hospital_publico',
+                'latitude' => 10.508500,
+                'longitude' => -66.902300,
+                'address_description' => 'Av. Vollmer, San Bernardino, Caracas.',
+                'status' => 'operativo',
+            ],
+            [
+                'name' => 'Hospital Vargas de Caracas',
+                'type' => 'hospital_publico',
+                'latitude' => 10.514032,
+                'longitude' => -66.912643,
+                'address_description' => 'San José, Caracas.',
+                'status' => 'operativo',
+            ],
+            [
+                'name' => 'Hospital Dr. José María Vargas (La Guaira)',
+                'type' => 'hospital_publico',
+                'latitude' => 10.598500,
+                'longitude' => -66.942300,
+                'address_description' => 'La Guaira, estado Vargas.',
+                'status' => 'operativo',
+            ]
+        ];
 
-        Hospital::create([
-            'name' => 'Hospital Vargas de Caracas',
-            'type' => 'hospital_publico',
-            'latitude' => 10.51520000,
-            'longitude' => -66.91180000,
-            'address_description' => 'Monte Carmelo a San Pirito, San José, Caracas.',
-            'status' => 'sin_insumos',
-            'contact_phone' => '+582125629333',
-            'image_url' => 'https://r2.juntosvnzl.org/hospitals/hospital_vargas.jpg',
-        ]);
-
-        Hospital::create([
-            'name' => 'Hospital Dr. Miguel Pérez Carreño',
-            'type' => 'hospital_publico',
-            'latitude' => 10.47890000,
-            'longitude' => -66.95310000,
-            'address_description' => 'Calle Principal de La Yaguara, frente a la estación de Metro.',
-            'status' => 'colapsado',
-            'contact_phone' => '+582124725055',
-            'image_url' => 'https://r2.juntosvnzl.org/hospitals/perez_carreno.jpg',
-        ]);
-
-        Hospital::create([
-            'name' => 'Clínica Metropolitana (Privada)',
-            'type' => 'clinica_privada',
-            'latitude' => 10.48120000,
-            'longitude' => -66.81880000,
-            'address_description' => 'Calle A-1, Urbanización Caurimare, Caracas.',
-            'status' => 'operativo',
-            'contact_phone' => '+582129080111',
-            'image_url' => 'https://r2.juntosvnzl.org/hospitals/clinica_metro.jpg',
-        ]);
-
-        Hospital::create([
-            'name' => 'Carpa de Campaña - Plaza Venezuela',
-            'type' => 'carpa_campana',
-            'latitude' => 10.49650000,
-            'longitude' => -66.88580000,
-            'address_description' => 'Instalada en la plaza sur de Plaza Venezuela, al lado de la estación del metro.',
-            'status' => 'operativo',
-            'contact_phone' => null,
-            'image_url' => null,
-        ]);
+        foreach ($hospitals as $hospitalData) {
+            Hospital::updateOrCreate(
+                ['name' => $hospitalData['name']],
+                $hospitalData
+            );
+        }
     }
 }
