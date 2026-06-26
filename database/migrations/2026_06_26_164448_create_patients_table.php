@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('last_name', 100)->nullable();
             $table->integer('approximate_age')->nullable();
             $table->text('physical_description')->nullable();
-            $table->string('medical_status', 30)->default('estable');
+            $table->string('medical_status', 30)->default('desconocido');
             $table->timestamp('arrival_date')->useCurrent();
             $table->string('photo_url')->nullable();
             $table->timestamps();
