@@ -262,7 +262,40 @@ Retorna todos los incidentes registrados para su renderizado en mapa.
 
 ---
 
-## 8. Voluntarios (`/volunteers`)
+## 8. Edificios Dañados (`/damaged-buildings`)
+
+### Listar Edificios Dañados (GET)
+**Endpoint:** `GET /api/v1/damaged-buildings`
+*Permite consultar la lista de edificios afectados. Soporta filtros.*
+**Query Params:**
+- `city` (string) - *Búsqueda parcial (ILIKE) por ciudad.*
+- `damage_level` (string) - *Filtro exacto (ej: 'parcial', 'severo', 'total').*
+
+### Registrar Edificio Dañado (POST)
+**Endpoint:** `POST /api/v1/damaged-buildings`
+*Registro público Zero-login. Retorna un `secure_token`.*
+**Cuerpo de la petición (JSON):**
+- `name` (string, max 255) - Requerido
+- `city` (string, max 150)
+- `zone` (string, max 150)
+- `latitude` (numeric)
+- `longitude` (numeric)
+- `damage_level` (string, max 50) - 'parcial', 'severo', 'total'
+- `status` (string, max 50) - 'reportado', 'verificado'
+- `general_source` (string, max 255)
+- `notes` (string)
+
+**Posibles Códigos de Error:**
+- **422 Unprocessable Entity:** Errores de validación.
+
+### Actualizar Edificio (PUT)
+**Endpoint:** `PUT /api/v1/damaged-buildings/{id}`
+**Headers Requeridos:** `X-Secure-Token`
+*Permite corregir información o actualizar el estado de verificación.*
+
+---
+
+## 9. Voluntarios (`/volunteers`)
 
 ### Listar Voluntarios (GET)
 **Endpoint:** `GET /api/v1/volunteers`
