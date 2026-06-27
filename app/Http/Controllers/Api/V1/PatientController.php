@@ -63,14 +63,6 @@ class PatientController extends Controller
             if ($exists) {
                 return response()->json(['success' => false, 'message' => 'Ya existe un paciente registrado con ese DNI.'], 409);
             }
-        } elseif (! empty($request->first_name) && ! empty($request->last_name)) {
-            $exists = Patient::where('first_name', $request->first_name)
-                ->where('last_name', $request->last_name)
-                ->where('hospital_id', $request->hospital_id)
-                ->exists();
-            if ($exists) {
-                return response()->json(['success' => false, 'message' => 'Ya existe un paciente con ese nombre en este hospital.'], 409);
-            }
         }
 
         $data = $validator->validated();
