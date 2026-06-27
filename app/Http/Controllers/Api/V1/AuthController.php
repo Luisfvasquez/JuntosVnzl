@@ -19,6 +19,20 @@ class AuthController extends Controller
             'phone' => ['required', 'string', 'regex:/^\+58(412|414|424|416|426)\d{7}$/', 'unique:users'],
             'email' => 'required|string|email|max:150|unique:users',
             'password' => 'required|string|min:6',
+        ], [
+            'name.required' => 'El nombre es obligatorio.',
+            'name.max' => 'El nombre no debe exceder los 150 caracteres.',
+            'dni.required' => 'La cédula/DNI es obligatoria.',
+            'dni.regex' => 'El formato de la cédula/DNI es inválido (ej. V-12345678).',
+            'dni.unique' => 'Esta cédula/DNI ya se encuentra registrada.',
+            'phone.required' => 'El teléfono es obligatorio.',
+            'phone.regex' => 'El teléfono debe tener un formato válido de Venezuela (ej. +584121234567).',
+            'phone.unique' => 'Este número de teléfono ya se encuentra registrado.',
+            'email.required' => 'El correo electrónico es obligatorio.',
+            'email.email' => 'El correo electrónico no es válido.',
+            'email.unique' => 'Este correo electrónico ya se encuentra registrado.',
+            'password.required' => 'La contraseña es obligatoria.',
+            'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
         ]);
 
         if ($validator->fails()) {
