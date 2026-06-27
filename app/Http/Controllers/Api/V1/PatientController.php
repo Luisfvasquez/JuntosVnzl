@@ -44,10 +44,12 @@ class PatientController extends Controller
             'dni' => 'nullable|string|max:20',
             'first_name' => 'nullable|string|max:100',
             'last_name' => 'nullable|string|max:100',
+            'gender' => 'nullable|string|in:masculino,femenino,otro',
             'approximate_age' => 'nullable|integer',
             'physical_description' => 'nullable|string',
-            'medical_status' => 'nullable|string|in:estable,critico,observacion,dado_de_alta,fallecido,trasladado,desconocido',
+            'medical_status' => 'nullable|string|in:estable,critico,observacion,dado_de_alta,fallecido,trasladado',
             'photo' => 'nullable|image|max:5120',
+            'arrival_date' => 'nullable|date'
         ]);
 
         if ($validator->fails()) {

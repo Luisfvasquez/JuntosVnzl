@@ -14,6 +14,7 @@ class Patient extends Model
         'dni',
         'first_name',
         'last_name',
+        'gender',
         'approximate_age',
         'physical_description',
         'medical_status',

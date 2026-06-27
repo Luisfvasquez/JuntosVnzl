@@ -12,7 +12,11 @@ class AidOfferController extends Controller
 {
     public function index(Request $request)
     {
-        $offers = AidOffer::paginate($request->query('per_page', 15));
+        if ($request->has('page') || $request->has('per_page')) {
+            $offers = AidOffer::paginate($request->query('per_page', 15));
+        } else {
+            $offers = AidOffer::all();
+        }
         return response()->json([
             'success' => true,
             'message' => 'Ofertas obtenidas correctamente',

@@ -29,6 +29,7 @@ Este documento detalla cuáles campos pueden ser enviados como `null` o ser omit
 | | `physical_description` | Sí | Se almacena como `null` (se recomienda enviar descripción si no hay nombre). |
 | | `medical_status` | Sí | Toma el valor por defecto `"estable"`. |
 | | `photo` (Archivo) | Sí | No se genera url de foto; `photo_url` queda nulo. |
+| | `arrival_date` | Sí | Si se omite, toma la fecha y hora actuales del servidor. |
 | | `hospital_id` | No | **Único campo obligatorio**. El paciente debe estar en un hospital. |
 | **Registro de Usuario** (`/auth/register`) | `email` | Sí | Se almacena como `null` (opcional en Fase I). |
 | | `name`, `dni`, `phone`, `password` | No | Requeridos. DNI y teléfono deben cumplir regex y ser únicos. |

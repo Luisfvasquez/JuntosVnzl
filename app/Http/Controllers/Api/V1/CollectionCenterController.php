@@ -32,10 +32,11 @@ class CollectionCenterController extends Controller
             'center_name' => 'required|string|max:150',
             'manager_name' => 'required|string|max:150',
             'dni' => ['required', 'string', 'regex:/(V|E|J)-\d{5,9}/'],
-            'phone' => ['required', 'string', 'regex:/^\+58(412|414|424|416|426)\d{7}$/'],
+            'phone' => ['required', 'string', 'regex:/^\+58(412|414|424|416|426|422)\d{7}$/'],
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
             'address_description' => 'required|string',
+            'status' => 'sometimes|required|string|in:recibiendo_insumos,capacidad_maxima,distribuyendo,en_traslado,inactivo',
         ]);
 
         if ($validator->fails()) {

@@ -486,6 +486,7 @@ Registro de personas ingresadas en centros médicos de emergencia para facilitar
   * `physical_description`: Opcional, string (crucial para personas inconscientes o sin identificación).
   * `medical_status`: Opcional, string, enums: `estable`, `critico`, `observacion`, `dado_de_alta`, `fallecido`, `trasladado`.
   * `photo`: Opcional, Archivo de Imagen (JPG, PNG, WEBP), max 5MB (5120 KB).
+  * `arrival_date`: Opcional, string (DateTime), fecha y hora de ingreso (ej: `YYYY-MM-DD HH:MM:SS`).
 * **Manejo de Conflictos y Duplicados:**
   * Si se proporciona `dni`, la API verifica que no haya otro paciente con el mismo DNI. Si ya existe, retorna **`409 Conflict`**:
     `{"success": false, "message": "Ya existe un paciente registrado con ese DNI."}`
