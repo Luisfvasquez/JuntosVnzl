@@ -9,7 +9,7 @@ class CountryAidSeeder extends Seeder
 {
     public function run(): void
     {
-        CountryAid::create([
+        /* CountryAid::create([
             'country_name' => 'Colombia',
             'iso_code' => 'COL',
             'aid_type' => 'Rescate y Equipos Médicos',
@@ -39,6 +39,6 @@ class CountryAidSeeder extends Seeder
             'aid_type' => 'Insumos de Salud y Fármacos',
             'description' => 'Antibióticos de amplio espectro, kits de primeros auxilios traumatológicos y vacunas de emergencia.',
             'status' => 'en_camino',
-        ]);
+        ]); */
     }
 }

@@ -7,6 +7,8 @@ use App\Models\Patient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 class PatientController extends Controller
 {
@@ -47,9 +49,9 @@ class PatientController extends Controller
             'gender' => 'nullable|string|in:masculino,femenino,otro',
             'approximate_age' => 'nullable|integer',
             'physical_description' => 'nullable|string',
-            'medical_status' => 'nullable|string|in:estable,critico,observacion,dado_de_alta,fallecido,trasladado',
+            'medical_status' => 'nullable|string|in:estable,critico,observacion,dado_de_alta,fallecido,trasladado,desconocido',
             'photo' => 'nullable|image|max:5120',
-            'arrival_date' => 'nullable|date'
+            'arrival_date' => 'nullable|date',
         ]);
 
         if ($validator->fails()) {
@@ -61,27 +63,19 @@ class PatientController extends Controller
             if ($exists) {
                 return response()->json(['success' => false, 'message' => 'Ya existe un paciente registrado con ese DNI.'], 409);
             }
-        } elseif (! empty($request->first_name) && ! empty($request->last_name)) {
-            $exists = Patient::where('first_name', $request->first_name)
-                ->where('last_name', $request->last_name)
-                ->where('hospital_id', $request->hospital_id)
-                ->exists();
-            if ($exists) {
-                return response()->json(['success' => false, 'message' => 'Ya existe un paciente con ese nombre en este hospital.'], 409);
-            }
         }
 
         $data = $validator->validated();
 
         if ($request->hasFile('photo')) {
-            $manager = new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
+            $manager = new ImageManager(new Driver);
             $imageFile = $request->file('photo');
             $image = $manager->read($imageFile);
             $encoded = $image->toWebp(80); // Convert to WebP with 80% quality
-            
-            $filename = 'patients/' . uniqid() . '.webp';
+
+            $filename = 'patients/'.uniqid().'.webp';
             Storage::disk('r2')->put($filename, (string) $encoded);
-            
+
             $data['photo_url'] = Storage::disk('r2')->url($filename);
         }
 
@@ -97,8 +91,8 @@ class PatientController extends Controller
     public function update(Request $request, $id)
     {
         $patient = Patient::find($id);
-        
-        if (!$patient) {
+
+        if (! $patient) {
             return response()->json(['success' => false, 'message' => 'Paciente no encontrado'], 404);
         }
 
@@ -109,10 +103,10 @@ class PatientController extends Controller
             'physical_description' => 'sometimes|nullable|string',
             'medical_status' => 'sometimes|nullable|string|in:estable,critico,observacion,dado_de_alta,fallecido,trasladado',
             'dni' => 'prohibited',
-            'hospital_id' => 'prohibited'
+            'hospital_id' => 'prohibited',
         ], [
             'dni.prohibited' => 'El DNI no puede ser modificado.',
-            'hospital_id.prohibited' => 'El hospital no puede ser modificado por este medio.'
+            'hospital_id.prohibited' => 'El hospital no puede ser modificado por este medio.',
         ]);
 
         if ($validator->fails()) {
@@ -124,7 +118,7 @@ class PatientController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Paciente actualizado exitosamente por usuario registrado',
-            'data' => $patient
+            'data' => $patient,
         ]);
     }
 }

@@ -12,9 +12,10 @@ class AffectedZoneController extends Controller
     public function index()
     {
         $zones = AffectedZone::all();
+
         return response()->json([
             'success' => true,
-            'data' => $zones
+            'data' => $zones,
         ]);
     }
 
@@ -23,9 +24,9 @@ class AffectedZoneController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:150',
             'severity' => 'nullable|string|in:leve,moderada,grave,desastre_total',
-            'description' => 'required|string',
-            'latitude' => 'required|numeric',
-            'longitude' => 'required|numeric',
+            'description' => 'nullable|string',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
             'status' => 'nullable|string|in:activa,controlada,evacuada',
         ]);
 
@@ -38,26 +39,27 @@ class AffectedZoneController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Zona afectada registrada exitosamente',
-            'data' => $zone
+            'data' => $zone,
         ], 201);
     }
 
     public function show($id)
     {
         $zone = AffectedZone::find($id);
-        if (!$zone) {
+        if (! $zone) {
             return response()->json(['success' => false, 'message' => 'Zona afectada no encontrada'], 404);
         }
+
         return response()->json([
             'success' => true,
-            'data' => $zone
+            'data' => $zone,
         ]);
     }
 
     public function update(Request $request, $id)
     {
         $zone = AffectedZone::find($id);
-        if (!$zone) {
+        if (! $zone) {
             return response()->json(['success' => false, 'message' => 'Zona afectada no encontrada'], 404);
         }
 
@@ -80,14 +82,14 @@ class AffectedZoneController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Zona afectada actualizada',
-            'data' => $zone
+            'data' => $zone,
         ]);
     }
 
     public function destroy(Request $request, $id)
     {
         $zone = AffectedZone::find($id);
-        if (!$zone) {
+        if (! $zone) {
             return response()->json(['success' => false, 'message' => 'Zona afectada no encontrada'], 404);
         }
 
@@ -99,7 +101,7 @@ class AffectedZoneController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Zona eliminada exitosamente'
+            'message' => 'Zona eliminada exitosamente',
         ]);
     }
 }
