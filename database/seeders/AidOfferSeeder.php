@@ -10,7 +10,7 @@ class AidOfferSeeder extends Seeder
 {
     public function run(): void
     {
-        $carlos = User::where('name', 'like', '%Carlos%')->first();
+        /* $carlos = User::where('name', 'like', '%Carlos%')->first();
         $carlosId = $carlos ? $carlos->id : null;
 
         // Oferta 1: Carlos Rivas (Voluntario registrado - Transporte)
@@ -71,6 +71,6 @@ class AidOfferSeeder extends Seeder
             'longitude' => -66.97450000,
             'address_description' => 'Caricuao, sector UD3, bloque 12.',
             'status' => 'entregado',
-        ]);
+        ]); */
     }
 }
