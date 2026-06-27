@@ -102,9 +102,13 @@ Route::prefix('v1')->group(function () {
         Route::delete('/affected-zones/{id}', [AffectedZoneController::class, 'destroy']);
 
         Route::put('/volunteers/{id}', [VolunteerController::class, 'update']);
+        
+        // Edificios Dañados
+        Route::put('/damaged-buildings/{id}', [DamagedBuildingController::class, 'update']);
+        Route::delete('/damaged-buildings/{id}', [DamagedBuildingController::class, 'destroy']);
 
         // Pacientes
-        Route::post('/patients/{id}', [PatientController::class, 'update']);
+        Route::put('/patients/{id}', [PatientController::class, 'update']);
         Route::delete('/patients/{id}', [PatientController::class, 'destroy']);
     });
 });
