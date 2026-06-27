@@ -67,8 +67,6 @@ class AidOfferController extends Controller
                 'title' => 'sometimes|required|string|max:200',
                 'description' => 'sometimes|required|string',
                 'category' => 'sometimes|required|string|in:comida,ropa,vivienda,salud,transporte,otros',
-                'quantity' => 'sometimes|required|numeric|min:1',
-                'unit_of_measurement' => 'sometimes|required|string|max:50',
                 'latitude' => 'sometimes|required|numeric',
                 'longitude' => 'sometimes|required|numeric',
                 'address_description' => 'sometimes|required|string',
@@ -88,26 +86,19 @@ class AidOfferController extends Controller
             ]);
         }
 
-        // Coordinator puede editar: título, descripción, categoría, cantidad, estado, coordenadas
+        // Coordinator puede editar: título, descripción, categoría, estado, coordenadas, y datos del proveedor
         if ($isCoordinator) {
             $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+                'provider_name' => 'sometimes|required|string|max:150',
+                'dni' => 'sometimes|required|string|max:20',
+                'phone' => 'sometimes|required|string|max:20',
                 'title' => 'sometimes|required|string|max:200',
                 'description' => 'sometimes|required|string',
                 'category' => 'sometimes|required|string|in:comida,ropa,vivienda,salud,transporte,otros',
-                'quantity' => 'sometimes|required|numeric|min:1',
-                'unit_of_measurement' => 'sometimes|required|string|max:50',
                 'latitude' => 'sometimes|required|numeric',
                 'longitude' => 'sometimes|required|numeric',
                 'address_description' => 'sometimes|required|string',
                 'status' => 'sometimes|required|string|in:disponible,reservado,entregado,expirado',
-                // Coordinator NO puede cambiar estos campos
-                'provider_name' => 'prohibited',
-                'dni' => 'prohibited',
-                'phone' => 'prohibited',
-            ], [
-                'provider_name.prohibited' => 'El nombre del proveedor no puede ser modificado.',
-                'dni.prohibited' => 'El DNI no puede ser modificado.',
-                'phone.prohibited' => 'El teléfono no puede ser modificado.',
             ]);
 
             if ($validator->fails()) {
@@ -132,8 +123,6 @@ class AidOfferController extends Controller
             'title' => 'sometimes|required|string|max:200',
             'description' => 'sometimes|required|string',
             'category' => 'sometimes|required|string|in:comida,ropa,vivienda,salud,transporte,otros',
-            'quantity' => 'sometimes|required|numeric|min:1',
-            'unit_of_measurement' => 'sometimes|required|string|max:50',
             'latitude' => 'sometimes|required|numeric',
             'longitude' => 'sometimes|required|numeric',
             'address_description' => 'sometimes|required|string',
