@@ -147,6 +147,22 @@ Retorna todos los incidentes registrados para su renderizado en mapa.
 - `name` (string) - *Busca coincidencias parciales (ILIKE) en first_name o last_name.*
 - `description` (string) - *Busca coincidencias en physical_description.*
 
+### Actualizar Paciente (PUT) - Requiere Autenticación
+**Endpoint:** `PUT /api/v1/patients/{id}`
+**Headers Requeridos:** `Authorization: Bearer {token}` (Debe estar registrado e iniciado sesión)
+*Permite a usuarios registrados corregir errores en pacientes ingresados previamente.*
+**Cuerpo de la petición (JSON):**
+- `first_name` (string, opcional)
+- `last_name` (string, opcional)
+- `approximate_age` (integer, opcional)
+- `physical_description` (string, opcional)
+- `medical_status` (string, opcional)
+
+**Posibles Códigos de Error:**
+- **401 Unauthorized:** El usuario no está autenticado o el token es inválido.
+- **404 Not Found:** El paciente no existe.
+- **422 Unprocessable Entity:** Intento de modificar el DNI o el hospital (prohibido por seguridad).
+
 ---
 
 ## 6. Mascotas Perdidas (`/lost-pets`)

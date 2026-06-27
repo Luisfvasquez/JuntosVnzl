@@ -72,8 +72,15 @@ class PatientController extends Controller
         $data = $validator->validated();
 
         if ($request->hasFile('photo')) {
-            $path = $request->file('photo')->store('patients', 'r2');
-            $data['photo_url'] = Storage::disk('r2')->url($path);
+            $manager = new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
+            $imageFile = $request->file('photo');
+            $image = $manager->read($imageFile);
+            $encoded = $image->toWebp(80); // Convert to WebP with 80% quality
+            
+            $filename = 'patients/' . uniqid() . '.webp';
+            Storage::disk('r2')->put($filename, (string) $encoded);
+            
+            $data['photo_url'] = Storage::disk('r2')->url($filename);
         }
 
         $patient = Patient::create($data);
@@ -83,5 +90,39 @@ class PatientController extends Controller
             'message' => 'Paciente registrado exitosamente',
             'data' => $patient,
         ], 201);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $patient = Patient::find($id);
+        
+        if (!$patient) {
+            return response()->json(['success' => false, 'message' => 'Paciente no encontrado'], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'sometimes|nullable|string|max:100',
+            'last_name' => 'sometimes|nullable|string|max:100',
+            'approximate_age' => 'sometimes|nullable|integer',
+            'physical_description' => 'sometimes|nullable|string',
+            'medical_status' => 'sometimes|nullable|string|in:estable,critico,observacion,dado_de_alta,fallecido,trasladado',
+            'dni' => 'prohibited',
+            'hospital_id' => 'prohibited'
+        ], [
+            'dni.prohibited' => 'El DNI no puede ser modificado.',
+            'hospital_id.prohibited' => 'El hospital no puede ser modificado por este medio.'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+        }
+
+        $patient->update($validator->validated());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Paciente actualizado exitosamente por usuario registrado',
+            'data' => $patient
+        ]);
     }
 }

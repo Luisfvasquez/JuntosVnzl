@@ -55,8 +55,15 @@ class HospitalController extends Controller
         $data = $validator->validated();
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('hospitals', 'r2');
-            $data['image_url'] = Storage::disk('r2')->url($path);
+            $manager = new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
+            $imageFile = $request->file('image');
+            $image = $manager->read($imageFile);
+            $encoded = $image->toWebp(80); // Convert to WebP with 80% quality
+            
+            $filename = 'hospitals/' . uniqid() . '.webp';
+            Storage::disk('r2')->put($filename, (string) $encoded);
+            
+            $data['image_url'] = Storage::disk('r2')->url($filename);
         }
 
         $hospital = Hospital::create($data);

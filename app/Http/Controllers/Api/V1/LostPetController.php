@@ -41,8 +41,15 @@ class LostPetController extends Controller
         $data = $validator->validated();
 
         if ($request->hasFile('photo')) {
-            $path = $request->file('photo')->store('lost_pets', 'r2');
-            $data['photo_url'] = Storage::disk('r2')->url($path);
+            $manager = new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
+            $imageFile = $request->file('photo');
+            $image = $manager->read($imageFile);
+            $encoded = $image->toWebp(80); // Convert to WebP with 80% quality
+            
+            $filename = 'lost_pets/' . uniqid() . '.webp';
+            Storage::disk('r2')->put($filename, (string) $encoded);
+            
+            $data['photo_url'] = Storage::disk('r2')->url($filename);
         }
 
         $pet = LostPet::create($data);
