@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Models\Volunteer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class VolunteerController extends Controller
@@ -50,13 +51,28 @@ class VolunteerController extends Controller
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
             'description' => 'required|string',
+            'photo' => 'nullable|image|max:5120',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
 
-        $volunteer = Volunteer::create($validator->validated());
+        $data = $validator->validated();
+
+        if ($request->hasFile('photo')) {
+            $manager = new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
+            $imageFile = $request->file('photo');
+            $image = $manager->read($imageFile);
+            $encoded = $image->toWebp(80);
+            
+            $filename = 'volunteers/' . uniqid() . '.webp';
+            Storage::disk('r2')->put($filename, (string) $encoded);
+            
+            $data['photo_url'] = Storage::disk('r2')->url($filename);
+        }
+
+        $volunteer = Volunteer::create($data);
 
         return response()->json([
             'success' => true,

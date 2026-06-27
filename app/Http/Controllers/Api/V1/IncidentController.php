@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Models\Incident;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class IncidentController extends Controller
@@ -29,17 +30,25 @@ class IncidentController extends Controller
         $validator = Validator::make($request->all(), [
             'reporter_name' => 'nullable|string|max:150',
             'description' => 'required|string',
-            'latitude' => 'required|numeric',
-            'longitude' => 'required|numeric',
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
             'address_description' => 'required|string',
             'severity' => 'nullable|string|in:leve,moderado,critico,catastrofico',
+            'photo' => 'nullable|image|max:5120',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
 
-        $incident = Incident::create($validator->validated());
+        $data = $validator->validated();
+
+        if ($request->hasFile('photo')) {
+            $path = $request->file('photo')->store('incidents', 'r2');
+            $data['photo_url'] = Storage::disk('r2')->url($path);
+        }
+
+        $incident = Incident::create($data);
 
         return response()->json([
             'success' => true,

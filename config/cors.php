@@ -17,7 +17,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://juntosvnzl.com', 'https://www.juntosvnzl.com'],
+    'allowed_origins' => ['https://juntosvnzl.com', 'https://www.juntosvnzl.com','http://localhost:5173', 'http://localhost:3000'],
 
     'allowed_origins_patterns' => [],
 

@@ -23,6 +23,7 @@ class Volunteer extends Model
         'latitude',
         'longitude',
         'description',
+        'photo_url',
         'status',
     ];
 

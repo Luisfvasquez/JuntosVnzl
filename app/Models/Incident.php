@@ -15,6 +15,7 @@ class Incident extends Model
         'latitude',
         'longitude',
         'address_description',
+        'photo_url',
         'severity',
         'aid_status',
         'aid_type_received',
