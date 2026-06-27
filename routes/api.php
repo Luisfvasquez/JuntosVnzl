@@ -31,6 +31,21 @@ Route::prefix('v1')->group(function () {
     Route::get('/patients/search', [App\Http\Controllers\Api\V1\PatientController::class, 'search']);
     Route::post('/patients', [App\Http\Controllers\Api\V1\PatientController::class, 'store']);
 
+    // Mascotas Perdidas
+    Route::post('/lost-pets', [App\Http\Controllers\Api\V1\LostPetController::class, 'store']);
+    Route::get('/lost-pets', [App\Http\Controllers\Api\V1\LostPetController::class, 'index']);
+    Route::get('/lost-pets/{id}', [App\Http\Controllers\Api\V1\LostPetController::class, 'show']);
+
+    // Zonas Afectadas
+    Route::post('/affected-zones', [App\Http\Controllers\Api\V1\AffectedZoneController::class, 'store']);
+    Route::get('/affected-zones', [App\Http\Controllers\Api\V1\AffectedZoneController::class, 'index']);
+    Route::get('/affected-zones/{id}', [App\Http\Controllers\Api\V1\AffectedZoneController::class, 'show']);
+
+    // Voluntarios
+    Route::post('/volunteers', [App\Http\Controllers\Api\V1\VolunteerController::class, 'store']);
+    Route::get('/volunteers', [App\Http\Controllers\Api\V1\VolunteerController::class, 'index']);
+    Route::get('/volunteers/{id}', [App\Http\Controllers\Api\V1\VolunteerController::class, 'show']);
+
     // Endpoints que requieren 'secure_token' (Modificación/Eliminación)
     Route::middleware('App\Http\Middleware\CheckSecureToken')->group(function () {
         Route::put('/aid-offers/{id}', [AidOfferController::class, 'update']);
@@ -38,6 +53,14 @@ Route::prefix('v1')->group(function () {
         
         Route::put('/collection-centers/{id}', [CollectionCenterController::class, 'update']);
         Route::delete('/collection-centers/{id}', [CollectionCenterController::class, 'destroy']);
+
+        Route::put('/lost-pets/{id}', [App\Http\Controllers\Api\V1\LostPetController::class, 'update']);
+        Route::delete('/lost-pets/{id}', [App\Http\Controllers\Api\V1\LostPetController::class, 'destroy']);
+
+        Route::put('/affected-zones/{id}', [App\Http\Controllers\Api\V1\AffectedZoneController::class, 'update']);
+        Route::delete('/affected-zones/{id}', [App\Http\Controllers\Api\V1\AffectedZoneController::class, 'destroy']);
+        
+        Route::put('/volunteers/{id}', [App\Http\Controllers\Api\V1\VolunteerController::class, 'update']);
     });
 
     // Fase II: Autenticación (JWT)

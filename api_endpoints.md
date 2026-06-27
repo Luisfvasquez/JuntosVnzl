@@ -149,7 +149,171 @@ Retorna todos los incidentes registrados para su renderizado en mapa.
 
 ---
 
-## 6. Autenticación (Fase II)
+## 6. Mascotas Perdidas (`/lost-pets`)
+
+### Registrar Mascota Perdida (POST)
+**Endpoint:** `POST /api/v1/lost-pets`
+*No requiere autenticación. Soporta subida de foto a Cloudflare R2 y retorna un secure_token.*
+**Cuerpo de la petición (FormData):**
+- `reporter_name` (string, max 150)
+- `contact_phone` (string, regex: `+58...`)
+- `pet_name` (string, opcional)
+- `species` (string): 'perro', 'gato', 'otro'
+- `breed` (string, opcional)
+- `description` (string)
+- `latitude` (numeric)
+- `longitude` (numeric)
+- `address_description` (string)
+- `photo` (file, opcional, max: 5MB)
+
+**Ejemplo de Respuesta Exitoso (201 Created):**
+```json
+{
+  "success": true,
+  "message": "Mascota perdida registrada exitosamente",
+  "data": {
+    "id": 1,
+    "reporter_name": "Luis Pérez",
+    "contact_phone": "+584141234567",
+    "pet_name": "Firulais",
+    "species": "perro",
+    "status": "perdido",
+    "photo_url": "https://pub-....r2.dev/lost_pets/...",
+    "secure_token": "a1b2c3d4-...",
+    "created_at": "2026-06-26T23:00:00.000000Z"
+  }
+}
+```
+**Posibles Códigos de Error:**
+- **422 Unprocessable Entity:** Faltan campos requeridos o el teléfono no es válido (no comienza con +58412/414/etc).
+
+### Actualizar Estado (PUT)
+**Endpoint:** `PUT /api/v1/lost-pets/{id}`
+**Headers Requeridos:** `X-Secure-Token`
+**Cuerpo (JSON):**
+- `status` (string, opcional): 'perdido', 'encontrado', 'en_refugio'
+
+**Posibles Códigos de Error:**
+- **403 Forbidden:** El `X-Secure-Token` no coincide.
+- **404 Not Found:** La mascota no existe.
+- **422 Unprocessable Entity:** Intento de modificar el número telefónico (está prohibido).
+
+---
+
+## 7. Zonas Afectadas (`/affected-zones`)
+
+### Registrar Zona Afectada (POST)
+**Endpoint:** `POST /api/v1/affected-zones`
+*No requiere autenticación. Retorna un secure_token.*
+**Cuerpo de la petición (JSON):**
+- `name` (string, max 150)
+- `severity` (string, opcional): 'leve', 'moderada', 'grave', 'desastre_total'
+- `description` (string)
+- `latitude` (numeric)
+- `longitude` (numeric)
+- `status` (string, opcional): 'activa', 'controlada', 'evacuada'
+
+**Ejemplo de Respuesta Exitoso (201 Created):**
+```json
+{
+  "success": true,
+  "message": "Zona afectada registrada exitosamente",
+  "data": {
+    "id": 1,
+    "name": "Sector Las Tejerías",
+    "severity": "desastre_total",
+    "description": "Deslizamiento de tierra bloqueando accesos.",
+    "latitude": 10.2458,
+    "longitude": -67.1685,
+    "status": "activa",
+    "secure_token": "f4e3d2c1-...",
+    "created_at": "2026-06-26T23:05:00.000000Z"
+  }
+}
+```
+
+### Actualizar Zona (PUT)
+**Endpoint:** `PUT /api/v1/affected-zones/{id}`
+**Headers Requeridos:** `X-Secure-Token`
+**Cuerpo (JSON):**
+- `severity` (string, opcional)
+- `status` (string, opcional)
+- `description` (string, opcional)
+
+**Posibles Códigos de Error:**
+- **403 Forbidden:** El `X-Secure-Token` no coincide.
+- **404 Not Found:** La zona no existe.
+
+---
+
+## 8. Voluntarios (`/volunteers`)
+
+### Listar Voluntarios (GET)
+**Endpoint:** `GET /api/v1/volunteers`
+*Obtiene la lista de voluntarios. Permite filtros vía Query Params para llenar la interfaz de búsqueda.*
+**Query Params Soportados:**
+- `skill`: Filtra por categoría profesional (ej: `medico`, `rescatista`, `informatico`).
+- `modality`: Filtra por modalidad (ej: `presencial`, `virtual`).
+- `search`: Búsqueda de texto (busca coincidencias en el nombre o en la descripción de ubicación `location_description`).
+
+**Ejemplo de Petición:** `GET /api/v1/volunteers?skill=medico&modality=virtual`
+
+### Registrar Voluntario (POST)
+**Endpoint:** `POST /api/v1/volunteers`
+*Registro público Zero-login. Retorna un secure_token.*
+**Cuerpo de la petición (JSON o FormData):**
+- `full_name` (string, max 150)
+- `dni` (string, max 20)
+- `phone` (string, regex: `+58...`)
+- `email` (string, opcional)
+- `skill_category` (string, max 50): ej. 'medico', 'enfermero', 'psicologo', 'rescatista', 'conductor', 'informatico', 'otra_ayuda'
+- `availability_description` (string, max 150): ej. 'Disponible 24hs'
+- `modality` (string): 'presencial', 'virtual'
+- `location_description` (string)
+- `latitude` (numeric, opcional)
+- `longitude` (numeric, opcional)
+- `description` (string)
+
+**Ejemplo de Respuesta Exitoso (201 Created):**
+```json
+{
+  "success": true,
+  "message": "Voluntario registrado exitosamente",
+  "data": {
+    "id": 1,
+    "full_name": "María González",
+    "dni": "V-12345678",
+    "phone": "+584141234567",
+    "skill_category": "medico",
+    "availability_description": "Fines de semana",
+    "modality": "presencial",
+    "location_description": "Mérida, Mérida",
+    "description": "Atención primaria.",
+    "status": "disponible",
+    "secure_token": "a1b2c3d4-...",
+    "created_at": "2026-06-26T23:00:00.000000Z"
+  }
+}
+```
+**Posibles Códigos de Error:**
+- **422 Unprocessable Entity:** Faltan campos requeridos o el teléfono no tiene formato válido de Venezuela.
+
+### Actualizar Estado de Voluntario (PUT)
+**Endpoint:** `PUT /api/v1/volunteers/{id}`
+**Headers Requeridos:** `X-Secure-Token`
+**Cuerpo (JSON):**
+- `status` (string, opcional): 'disponible', 'asignado', 'inactivo'
+- `availability_description` (string, opcional)
+- `location_description` (string, opcional)
+
+**Posibles Códigos de Error:**
+- **403 Forbidden:** El `X-Secure-Token` no coincide.
+- **404 Not Found:** El voluntario no existe.
+- **422 Unprocessable Entity:** Intentar modificar DNI o Teléfono (está prohibido por seguridad).
+
+---
+
+## 9. Autenticación (Fase II)
 
 * **Registro:** `POST /api/v1/auth/register` (Requiere `name`, `dni`, `phone`, `email`, `password`) - Retorna el `token` (JWT).
 * **Login:** `POST /api/v1/auth/login` (Requiere `dni`, `password`) - Retorna el `token` (JWT).
