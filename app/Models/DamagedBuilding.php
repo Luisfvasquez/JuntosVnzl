@@ -20,7 +20,19 @@ class DamagedBuilding extends Model
         'status',
         'general_source',
         'notes',
+        'image_urls',
+        'is_verified',
     ];
+
+    protected $casts = [
+        'image_urls' => 'array',
+        'is_verified' => 'boolean',
+    ];
+
+    public function evaluations()
+    {
+        return $this->hasMany(DamagedBuildingEvaluation::class);
+    }
 
     protected static function boot()
     {

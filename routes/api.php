@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CollectionCenterController;
 use App\Http\Controllers\Api\V1\CountryAidController;
 use App\Http\Controllers\Api\V1\DamagedBuildingController;
+use App\Http\Controllers\Api\V1\DamagedBuildingEvaluationController;
 use App\Http\Controllers\Api\V1\DashboardController;
 use App\Http\Controllers\Api\V1\HospitalController;
 use App\Http\Controllers\Api\V1\IncidentController;
@@ -58,6 +59,8 @@ Route::prefix('v1')->group(function () {
     Route::post('/damaged-buildings', [DamagedBuildingController::class, 'store']);
     Route::get('/damaged-buildings', [DamagedBuildingController::class, 'index']);
     Route::get('/damaged-buildings/{id}', [DamagedBuildingController::class, 'show']);
+    Route::get('/damaged-buildings/{id}/evaluations', [DamagedBuildingEvaluationController::class, 'index']);
+    Route::post('/damaged-buildings/{id}/evaluations', [DamagedBuildingEvaluationController::class, 'store']);
 
     // Voluntarios
     Route::post('/volunteers', [VolunteerController::class, 'store']);
@@ -106,6 +109,8 @@ Route::prefix('v1')->group(function () {
         // Edificios Dañados
         Route::put('/damaged-buildings/{id}', [DamagedBuildingController::class, 'update']);
         Route::delete('/damaged-buildings/{id}', [DamagedBuildingController::class, 'destroy']);
+        Route::put('/damaged-buildings/evaluations/{id}', [DamagedBuildingEvaluationController::class, 'update']);
+        Route::delete('/damaged-buildings/evaluations/{id}', [DamagedBuildingEvaluationController::class, 'destroy']);
 
         // Pacientes
         Route::put('/patients/{id}', [PatientController::class, 'update']);
