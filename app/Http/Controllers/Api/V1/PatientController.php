@@ -33,6 +33,22 @@ class PatientController extends Controller
             $query->where('physical_description', 'ILIKE', '%'.$request->description.'%');
         }
 
+        if ($request->has('hospital_id')) {
+            $hospitalIds = is_array($request->hospital_id) 
+                ? $request->hospital_id 
+                : array_map('trim', explode(',', $request->hospital_id));
+                
+            $query->whereIn('hospital_id', array_filter($hospitalIds));
+        }
+
+        if ($request->has('medical_status')) {
+            $statuses = is_array($request->medical_status)
+                ? $request->medical_status
+                : array_map('trim', explode(',', $request->medical_status));
+            
+            $query->whereIn('medical_status', array_filter($statuses));
+        }
+
         return response()->json([
             'success' => true,
             'data' => $query->paginate($request->query('per_page', 15)),

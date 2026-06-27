@@ -30,6 +30,9 @@ Route::prefix('v1')->group(function () {
 
     Route::get('/patients/search', [App\Http\Controllers\Api\V1\PatientController::class, 'search']);
     Route::post('/patients', [App\Http\Controllers\Api\V1\PatientController::class, 'store']);
+    
+    // Dashboard Stats
+    Route::get('/dashboard/stats', [App\Http\Controllers\Api\V1\DashboardController::class, 'stats']);
 
     // Mascotas Perdidas
     Route::post('/lost-pets', [App\Http\Controllers\Api\V1\LostPetController::class, 'store']);
@@ -45,6 +48,14 @@ Route::prefix('v1')->group(function () {
     Route::post('/volunteers', [App\Http\Controllers\Api\V1\VolunteerController::class, 'store']);
     Route::get('/volunteers', [App\Http\Controllers\Api\V1\VolunteerController::class, 'index']);
     Route::get('/volunteers/{id}', [App\Http\Controllers\Api\V1\VolunteerController::class, 'show']);
+
+    // Necesidades
+    Route::post('/needs', [App\Http\Controllers\Api\V1\NeedController::class, 'store']);
+    Route::get('/needs', [App\Http\Controllers\Api\V1\NeedController::class, 'index']);
+    Route::patch('/needs/{id}/status', [App\Http\Controllers\Api\V1\NeedController::class, 'updateStatus']);
+    Route::post('/needs/{id}/responses', [App\Http\Controllers\Api\V1\NeedController::class, 'storeResponse']);
+    Route::get('/needs/{id}/responses', [App\Http\Controllers\Api\V1\NeedController::class, 'getResponses']);
+
 
     // Endpoints que requieren 'secure_token' (Modificación/Eliminación)
     Route::middleware('App\Http\Middleware\CheckSecureToken')->group(function () {
