@@ -46,8 +46,8 @@ class LostPetController extends Controller
         if ($request->hasFile('photo')) {
             $manager = new ImageManager(new Driver);
             $imageFile = $request->file('photo');
-            $image = $manager->read($imageFile);
-            $encoded = $image->toWebp(80); // Convert to WebP with 80% quality
+            $image = $manager->decode($imageFile);
+            $encoded = $image->encodeUsingFileExtension('webp', 80); // Convert to WebP with 80% quality
 
             $filename = 'lost_pets/'.uniqid().'.webp';
             Storage::disk('r2')->put($filename, (string) $encoded);

@@ -63,8 +63,8 @@ class VolunteerController extends Controller
         if ($request->hasFile('photo')) {
             $manager = new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
             $imageFile = $request->file('photo');
-            $image = $manager->read($imageFile);
-            $encoded = $image->toWebp(80);
+            $image = $manager->decode($imageFile);
+            $encoded = $image->encodeUsingFileExtension('webp', 80);
             
             $filename = 'volunteers/' . uniqid() . '.webp';
             Storage::disk('r2')->put($filename, (string) $encoded);

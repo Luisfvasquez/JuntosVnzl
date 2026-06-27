@@ -86,8 +86,8 @@ class PatientController extends Controller
         if ($request->hasFile('photo')) {
             $manager = new ImageManager(new Driver);
             $imageFile = $request->file('photo');
-            $image = $manager->read($imageFile);
-            $encoded = $image->toWebp(80); // Convert to WebP with 80% quality
+            $image = $manager->decode($imageFile);
+            $encoded = $image->encodeUsingFileExtension('webp', 80); // Convert to WebP with 80% quality
 
             $filename = 'patients/'.uniqid().'.webp';
             Storage::disk('r2')->put($filename, (string) $encoded);
@@ -106,6 +106,11 @@ class PatientController extends Controller
 
     public function update(Request $request, $id)
     {
+        $user = auth()->user();
+        if (!in_array($user->role, ['superadmin', 'coordinator'])) {
+            return response()->json(['success' => false, 'message' => 'No autorizado para editar pacientes.'], 403);
+        }
+
         $patient = Patient::find($id);
 
         if (! $patient) {
@@ -113,28 +118,70 @@ class PatientController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'first_name' => 'sometimes|nullable|string|max:100',
-            'last_name' => 'sometimes|nullable|string|max:100',
-            'approximate_age' => 'sometimes|nullable|integer',
-            'physical_description' => 'sometimes|nullable|string',
-            'medical_status' => 'sometimes|nullable|string|in:estable,critico,observacion,dado_de_alta,fallecido,trasladado',
-            'dni' => 'prohibited',
-            'hospital_id' => 'prohibited',
-        ], [
-            'dni.prohibited' => 'El DNI no puede ser modificado.',
-            'hospital_id.prohibited' => 'El hospital no puede ser modificado por este medio.',
+            'first_name' => 'nullable|string|max:100',
+            'last_name' => 'nullable|string|max:100',
+            'gender' => 'nullable|string|in:masculino,femenino,otro',
+            'approximate_age' => 'nullable|integer',
+            'physical_description' => 'nullable|string',
+            'medical_status' => 'nullable|string|in:estable,critico,observacion,dado_de_alta,fallecido,trasladado,desconocido',
+            'hospital_id' => 'required|exists:hospitals,id',
+            'dni' => 'nullable|string|max:50',
+            'photo' => 'nullable|image|max:5120',
+            'arrival_date' => 'nullable|date',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
 
-        $patient->update($validator->validated());
+        if (!empty($request->dni) && $request->dni !== $patient->dni) {
+            $exists = Patient::where('dni', $request->dni)->exists();
+            if ($exists) {
+                return response()->json(['success' => false, 'message' => 'Ya existe un paciente registrado con ese DNI.'], 409);
+            }
+        }
+
+        $data = $validator->validated();
+
+        if ($request->hasFile('photo')) {
+            $manager = new ImageManager(new Driver);
+            $imageFile = $request->file('photo');
+            $image = $manager->decode($imageFile);
+            $encoded = $image->encodeUsingFileExtension('webp', 80);
+
+            $filename = 'patients/'.uniqid().'.webp';
+            Storage::disk('r2')->put($filename, (string) $encoded);
+
+            $data['photo_url'] = Storage::disk('r2')->url($filename);
+        }
+
+        $patient->update($data);
 
         return response()->json([
             'success' => true,
-            'message' => 'Paciente actualizado exitosamente por usuario registrado',
+            'message' => 'Paciente actualizado exitosamente',
             'data' => $patient,
+        ]);
+    }
+
+    public function destroy($id)
+    {
+        $user = auth()->user();
+        if ($user->role !== 'superadmin') {
+            return response()->json(['success' => false, 'message' => 'No autorizado para eliminar pacientes.'], 403);
+        }
+
+        $patient = Patient::find($id);
+
+        if (! $patient) {
+            return response()->json(['success' => false, 'message' => 'Paciente no encontrado'], 404);
+        }
+
+        $patient->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Paciente eliminado exitosamente'
         ]);
     }
 }

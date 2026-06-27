@@ -17,7 +17,7 @@ class AuthController extends Controller
             'name' => 'required|string|max:150',
             'dni' => ['required', 'string', 'regex:/(V|E|J)-\d{5,9}/', 'unique:users'],
             'phone' => ['required', 'string', 'regex:/^\+58(412|414|424|416|426)\d{7}$/', 'unique:users'],
-            'email' => 'nullable|string|email|max:150|unique:users',
+            'email' => 'required|string|email|max:150|unique:users',
             'password' => 'required|string|min:6',
         ]);
 
@@ -51,7 +51,7 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $credentials = $request->only('dni', 'password');
+        $credentials = $request->only('email', 'password');
 
         if (! $token = auth('api')->attempt($credentials)) {
             return response()->json(['success' => false, 'message' => 'Credenciales inválidas'], 401);

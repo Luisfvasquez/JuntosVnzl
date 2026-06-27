@@ -57,8 +57,8 @@ class HospitalController extends Controller
         if ($request->hasFile('image')) {
             $manager = new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
             $imageFile = $request->file('image');
-            $image = $manager->read($imageFile);
-            $encoded = $image->toWebp(80); // Convert to WebP with 80% quality
+            $image = $manager->decode($imageFile);
+            $encoded = $image->encodeUsingFileExtension('webp', 80); // Convert to WebP with 80% quality
             
             $filename = 'hospitals/' . uniqid() . '.webp';
             Storage::disk('r2')->put($filename, (string) $encoded);
