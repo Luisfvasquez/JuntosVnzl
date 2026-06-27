@@ -12,9 +12,9 @@ return new class extends Migration
             $table->id();
             $table->string('name', 150);
             $table->string('type', 50)->default('hospital_publico');
-            $table->decimal('latitude', 10, 8);
-            $table->decimal('longitude', 11, 8);
-            $table->text('address_description');
+            $table->decimal('latitude', 10, 8)->nullable();
+            $table->decimal('longitude', 11, 8)->nullable();
+            $table->text('address_description')->nullable();
             $table->string('status', 30)->default('operativo');
             $table->string('contact_phone', 20)->nullable();
             $table->string('image_url')->nullable();

@@ -15,10 +15,10 @@ return new class extends Migration
             $table->string('pet_name', 100)->nullable();
             $table->string('species', 50)->default('perro');
             $table->string('breed', 100)->nullable();
-            $table->text('description');
-            $table->decimal('latitude', 10, 8);
-            $table->decimal('longitude', 11, 8);
-            $table->text('address_description');
+            $table->text('description')->nullable();
+            $table->decimal('latitude', 10, 8)->nullable();
+            $table->decimal('longitude', 11, 8)->nullable();
+            $table->text('address_description')->nullable();
             $table->string('status', 30)->default('perdido');
             $table->string('photo_url')->nullable();
             $table->uuid('secure_token')->unique();
