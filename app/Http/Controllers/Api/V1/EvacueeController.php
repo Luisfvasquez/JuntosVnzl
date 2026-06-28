@@ -106,8 +106,8 @@ class EvacueeController extends Controller
 
     public function update(Request $request, $id)
     {
-        $user = auth()->user();
-        if (!in_array($user->role, ['superadmin', 'coordinator'])) {
+        $user = auth('api')->user() ?: auth()->user();
+        if (!$user || !in_array($user->role, ['superadmin', 'admin', 'coordinator'])) {
             return response()->json(['success' => false, 'message' => 'No autorizado para editar damnificados.'], 403);
         }
 
@@ -165,8 +165,8 @@ class EvacueeController extends Controller
 
     public function destroy($id)
     {
-        $user = auth()->user();
-        if ($user->role !== 'superadmin') {
+        $user = auth('api')->user() ?: auth()->user();
+        if (!$user || !in_array($user->role, ['superadmin', 'admin'])) {
             return response()->json(['success' => false, 'message' => 'No autorizado para eliminar.'], 403);
         }
 
