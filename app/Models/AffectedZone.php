@@ -17,7 +17,17 @@ class AffectedZone extends Model
         'latitude',
         'longitude',
         'status',
+        'is_attended',
     ];
+
+    protected $casts = [
+        'is_attended' => 'boolean',
+    ];
+
+    public function updates()
+    {
+        return $this->hasMany(AffectedZoneUpdate::class);
+    }
 
     protected static function boot()
     {

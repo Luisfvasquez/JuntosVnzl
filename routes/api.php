@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AffectedZoneController;
+use App\Http\Controllers\Api\V1\AffectedZoneUpdateController;
 use App\Http\Controllers\Api\V1\AidOfferController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CollectionCenterController;
@@ -8,11 +9,13 @@ use App\Http\Controllers\Api\V1\CountryAidController;
 use App\Http\Controllers\Api\V1\DamagedBuildingController;
 use App\Http\Controllers\Api\V1\DamagedBuildingEvaluationController;
 use App\Http\Controllers\Api\V1\DashboardController;
+use App\Http\Controllers\Api\V1\EvacueeController;
 use App\Http\Controllers\Api\V1\HospitalController;
 use App\Http\Controllers\Api\V1\IncidentController;
 use App\Http\Controllers\Api\V1\LostPetController;
 use App\Http\Controllers\Api\V1\NeedController;
 use App\Http\Controllers\Api\V1\PatientController;
+use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\VolunteerController;
 use Illuminate\Support\Facades\Route;
 
@@ -50,10 +53,21 @@ Route::prefix('v1')->group(function () {
     Route::get('/lost-pets', [LostPetController::class, 'index']);
     Route::get('/lost-pets/{id}', [LostPetController::class, 'show']);
 
+    // Damnificados (Evacuees)
+    Route::get('/evacuees/search', [EvacueeController::class, 'index']);
+    Route::get('/evacuees/{id}', [EvacueeController::class, 'show']);
+    Route::post('/evacuees', [EvacueeController::class, 'store']);
+    Route::put('/evacuees/{id}', [EvacueeController::class, 'update']);
+    Route::delete('/evacuees/{id}', [EvacueeController::class, 'destroy']);
+
     // Zonas Afectadas
     Route::post('/affected-zones', [AffectedZoneController::class, 'store']);
     Route::get('/affected-zones', [AffectedZoneController::class, 'index']);
     Route::get('/affected-zones/{id}', [AffectedZoneController::class, 'show']);
+    Route::put('/affected-zones/{id}', [AffectedZoneController::class, 'update']);
+    Route::delete('/affected-zones/{id}', [AffectedZoneController::class, 'destroy']);
+    Route::get('/affected-zones/{id}/updates', [AffectedZoneUpdateController::class, 'index']);
+    Route::post('/affected-zones/{id}/updates', [AffectedZoneUpdateController::class, 'store']);
 
     // Edificios Dañados
     Route::post('/damaged-buildings', [DamagedBuildingController::class, 'store']);
@@ -88,6 +102,12 @@ Route::prefix('v1')->group(function () {
     // Usuarios normales siguen usando secure_token
     // ============================================
     Route::middleware('auth:api')->group(function () {
+        // Usuarios (Solo Administradores)
+        Route::get('/users', [App\Http\Controllers\Api\V1\UserController::class, 'index']);
+        Route::get('/users/{id}', [App\Http\Controllers\Api\V1\UserController::class, 'show']);
+        Route::put('/users/{id}', [App\Http\Controllers\Api\V1\UserController::class, 'update']);
+        Route::delete('/users/{id}', [App\Http\Controllers\Api\V1\UserController::class, 'destroy']);
+
         // AidOffers - Admin/Coordinator tienen acceso total, usuarios normales con secure_token
         Route::put('/aid-offers/{id}', [AidOfferController::class, 'update']);
         Route::delete('/aid-offers/{id}', [AidOfferController::class, 'destroy']);
@@ -101,8 +121,7 @@ Route::prefix('v1')->group(function () {
         Route::delete('/lost-pets/{id}', [LostPetController::class, 'destroy']);
 
         // AffectedZones
-        Route::put('/affected-zones/{id}', [AffectedZoneController::class, 'update']);
-        Route::delete('/affected-zones/{id}', [AffectedZoneController::class, 'destroy']);
+        Route::delete('/affected-zones/updates/{id}', [AffectedZoneUpdateController::class, 'destroy']);
 
         Route::put('/volunteers/{id}', [VolunteerController::class, 'update']);
         

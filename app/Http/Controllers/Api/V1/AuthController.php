@@ -19,6 +19,7 @@ class AuthController extends Controller
             'phone' => ['required', 'string', 'regex:/^\+58(412|414|424|416|426)\d{7}$/', 'unique:users'],
             'email' => 'required|string|email|max:150|unique:users',
             'password' => 'required|string|min:6',
+            'role' => 'sometimes|string|in:volunteer,engineer',
         ], [
             'name.required' => 'El nombre es obligatorio.',
             'name.max' => 'El nombre no debe exceder los 150 caracteres.',
@@ -33,6 +34,7 @@ class AuthController extends Controller
             'email.unique' => 'Este correo electrónico ya se encuentra registrado.',
             'password.required' => 'La contraseña es obligatoria.',
             'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
+            'role.in' => 'El rol debe ser volunteer o engineer.',
         ]);
 
         if ($validator->fails()) {
@@ -49,7 +51,7 @@ class AuthController extends Controller
             'phone' => $request->phone,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'volunteer',
+            'role' => $request->role ?? 'volunteer',
         ]);
 
         // Aquí iría el evento/observer para la migración de recursos huérfanos (Fase II)

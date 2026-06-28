@@ -59,6 +59,7 @@ class PatientController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'hospital_id' => 'required|exists:hospitals,id',
+            'hospital_area' => 'nullable|string|max:150',
             'dni' => 'nullable|string|max:20',
             'first_name' => 'nullable|string|max:100',
             'last_name' => 'nullable|string|max:100',
@@ -125,6 +126,7 @@ class PatientController extends Controller
             'physical_description' => 'nullable|string',
             'medical_status' => 'nullable|string|in:estable,critico,observacion,dado_de_alta,fallecido,trasladado,desconocido',
             'hospital_id' => 'required|exists:hospitals,id',
+            'hospital_area' => 'nullable|string|max:150',
             'dni' => 'nullable|string|max:50',
             'photo' => 'nullable|image|max:5120',
             'arrival_date' => 'nullable|date',

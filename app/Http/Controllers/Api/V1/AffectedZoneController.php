@@ -28,6 +28,7 @@ class AffectedZoneController extends Controller
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
             'status' => 'nullable|string|in:activa,controlada,evacuada',
+            'is_attended' => 'nullable|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -45,7 +46,10 @@ class AffectedZoneController extends Controller
 
     public function show($id)
     {
-        $zone = AffectedZone::find($id);
+        $zone = AffectedZone::with(['updates' => function ($query) {
+            $query->orderBy('created_at', 'desc');
+        }])->find($id);
+
         if (! $zone) {
             return response()->json(['success' => false, 'message' => 'Zona afectada no encontrada'], 404);
         }
@@ -63,14 +67,22 @@ class AffectedZoneController extends Controller
             return response()->json(['success' => false, 'message' => 'Zona afectada no encontrada'], 404);
         }
 
-        if ($request->header('X-Secure-Token') !== $zone->secure_token) {
-            return response()->json(['success' => false, 'message' => 'Token de seguridad inválido'], 403);
+        $user = auth('api')->user() ?: auth()->user();
+        $hasAdminRole = $user && in_array($user->role, ['superadmin', 'admin', 'coordinator']);
+        $hasValidToken = $request->input('secure_token') === $zone->secure_token;
+
+        if (!$hasAdminRole && !$hasValidToken) {
+            return response()->json(['success' => false, 'message' => 'No autorizado para editar esta zona. Debes ser administrador/coordinador o proveer el token de seguridad correcto.'], 403);
         }
 
         $validator = Validator::make($request->all(), [
+            'name' => 'sometimes|required|string|max:150',
             'severity' => 'sometimes|required|string|in:leve,moderada,grave,desastre_total',
             'status' => 'sometimes|required|string|in:activa,controlada,evacuada',
             'description' => 'sometimes|required|string',
+            'latitude' => 'sometimes|required|numeric',
+            'longitude' => 'sometimes|required|numeric',
+            'is_attended' => 'sometimes|required|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -93,8 +105,12 @@ class AffectedZoneController extends Controller
             return response()->json(['success' => false, 'message' => 'Zona afectada no encontrada'], 404);
         }
 
-        if ($request->header('X-Secure-Token') !== $zone->secure_token) {
-            return response()->json(['success' => false, 'message' => 'Token de seguridad inválido'], 403);
+        $user = auth('api')->user() ?: auth()->user();
+        $hasAdminRole = $user && in_array($user->role, ['superadmin', 'admin', 'coordinator']);
+        $hasValidToken = $request->input('secure_token') === $zone->secure_token;
+
+        if (!$hasAdminRole && !$hasValidToken) {
+            return response()->json(['success' => false, 'message' => 'No autorizado para eliminar esta zona. Debes ser administrador/coordinador o proveer el token de seguridad correcto.'], 403);
         }
 
         $zone->delete();
