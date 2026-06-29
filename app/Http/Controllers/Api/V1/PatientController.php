@@ -21,9 +21,9 @@ class PatientController extends Controller
             $dni = trim($request->dni);
             $digits = preg_replace('/[^0-9]/', '', $dni);
             $query->where(function ($q) use ($dni, $digits) {
-                $q->where('dni', $dni);
+                $q->where('dni', 'ILIKE', "%$dni%");
                 if (!empty($digits)) {
-                    $q->orWhere(DB::raw("regexp_replace(dni, '[^0-9]', '', 'g')"), $digits);
+                    $q->orWhere(DB::raw("regexp_replace(dni, '[^0-9]', '', 'g')"), 'LIKE', "%$digits%");
                 }
             });
         }
