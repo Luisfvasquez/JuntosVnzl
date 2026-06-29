@@ -18,14 +18,26 @@ class EvacueeController extends Controller
         $query = Evacuee::query();
 
         if ($request->filled('dni')) {
-            $query->where('dni', $request->dni);
+            $dni = trim($request->dni);
+            $digits = preg_replace('/[^0-9]/', '', $dni);
+            $query->where(function ($q) use ($dni, $digits) {
+                $q->where('dni', $dni);
+                if (!empty($digits)) {
+                    $q->orWhere(DB::raw("regexp_replace(dni, '[^0-9]', '', 'g')"), $digits);
+                }
+            });
         }
 
         if ($request->filled('name')) {
-            $name = $request->name;
-            $query->where(function ($q) use ($name) {
+            $name = trim($request->name);
+            $digits = preg_replace('/[^0-9]/', '', $name);
+            $query->where(function ($q) use ($name, $digits) {
                 $q->where('first_name', 'ILIKE', "%$name%")
-                  ->orWhere('last_name', 'ILIKE', "%$name%");
+                  ->orWhere('last_name', 'ILIKE', "%$name%")
+                  ->orWhere('dni', 'ILIKE', "%$name%");
+                if (!empty($digits)) {
+                    $q->orWhere(DB::raw("regexp_replace(dni, '[^0-9]', '', 'g')"), 'LIKE', "%$digits%");
+                }
             });
         }
 

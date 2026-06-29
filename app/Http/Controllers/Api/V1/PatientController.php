@@ -7,6 +7,7 @@ use App\Models\Patient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
 
@@ -17,15 +18,27 @@ class PatientController extends Controller
         $query = Patient::with('hospital');
 
         if ($request->filled('dni')) {
-            $query->where('dni', $request->dni);
+            $dni = trim($request->dni);
+            $digits = preg_replace('/[^0-9]/', '', $dni);
+            $query->where(function ($q) use ($dni, $digits) {
+                $q->where('dni', $dni);
+                if (!empty($digits)) {
+                    $q->orWhere(DB::raw("regexp_replace(dni, '[^0-9]', '', 'g')"), $digits);
+                }
+            });
         }
 
         if ($request->filled('name')) {
-            $name = $request->name;
-            $query->where(function ($q) use ($name) {
-                // ILIKE es específico de Postgres para búsquedas insensibles a mayúsculas
+            $name = trim($request->name);
+            $digits = preg_replace('/[^0-9]/', '', $name);
+            $query->where(function ($q) use ($name, $digits) {
                 $q->where('first_name', 'ILIKE', "%$name%")
-                    ->orWhere('last_name', 'ILIKE', "%$name%");
+                    ->orWhere('last_name', 'ILIKE', "%$name%")
+                    ->orWhere('dni', 'ILIKE', "%$name%")
+                    ->orWhere('physical_description', 'ILIKE', "%$name%");
+                if (!empty($digits)) {
+                    $q->orWhere(DB::raw("regexp_replace(dni, '[^0-9]', '', 'g')"), 'LIKE', "%$digits%");
+                }
             });
         }
 
