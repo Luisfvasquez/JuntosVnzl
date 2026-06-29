@@ -41,18 +41,20 @@ class DamagedBuildingController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'city' => 'nullable|string|max:150',
-            'zone' => 'nullable|string|max:150',
+            'name' => 'required|string|max:255|regex:/^[\pL\s\-]+$/u',
+            'city' => 'nullable|string|max:150|regex:/^[\pL\s\-]+$/u',
+            'zone' => 'nullable|string|max:150|not_regex:/[\{\}\<\>]/',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
             'damage_level' => 'nullable|string|max:50',
             'status' => 'nullable|string|max:50',
-            'general_source' => 'nullable|string|max:255',
-            'notes' => 'nullable|string',
+            'general_source' => 'nullable|string|max:255|not_regex:/[\{\}\<\>]/',
+            'notes' => 'nullable|string|not_regex:/[\{\}\<\>]/',
             'is_verified' => 'nullable|boolean',
             'images' => 'nullable|array|max:10',
-            'images.*' => 'image|max:5120'
+            'images.*' => 'image|max:5120',
+            'audit_name' => 'required|string|max:150|regex:/^[\pL\s\-]+$/u',
+            'audit_phone' => 'required|string|max:20'
         ]);
 
         if ($validator->fails()) {
@@ -113,15 +115,15 @@ class DamagedBuildingController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'name' => 'sometimes|required|string|max:255',
-            'city' => 'sometimes|nullable|string|max:150',
-            'zone' => 'sometimes|nullable|string|max:150',
+            'name' => 'sometimes|required|string|max:255|regex:/^[\pL\s\-]+$/u',
+            'city' => 'sometimes|nullable|string|max:150|regex:/^[\pL\s\-]+$/u',
+            'zone' => 'sometimes|nullable|string|max:150|not_regex:/[\{\}\<\>]/',
             'latitude' => 'sometimes|nullable|numeric',
             'longitude' => 'sometimes|nullable|numeric',
             'damage_level' => 'sometimes|nullable|string|max:50',
             'status' => 'sometimes|nullable|string|max:50',
-            'general_source' => 'sometimes|nullable|string|max:255',
-            'notes' => 'sometimes|nullable|string',
+            'general_source' => 'sometimes|nullable|string|max:255|not_regex:/[\{\}\<\>]/',
+            'notes' => 'sometimes|nullable|string|not_regex:/[\{\}\<\>]/',
             'is_verified' => 'sometimes|nullable|boolean',
             'retained_image_urls' => 'sometimes|nullable|array',
             'retained_image_urls.*' => 'string',

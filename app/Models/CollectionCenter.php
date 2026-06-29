@@ -20,6 +20,9 @@ class CollectionCenter extends Model
         'longitude',
         'address_description',
         'status',
+        'secure_token',
+        'audit_name',
+        'audit_phone',
     ];
 
     protected static function boot()

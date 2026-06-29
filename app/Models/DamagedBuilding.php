@@ -22,6 +22,8 @@ class DamagedBuilding extends Model
         'notes',
         'image_urls',
         'is_verified',
+        'audit_name',
+        'audit_phone',
     ];
 
     protected $casts = [

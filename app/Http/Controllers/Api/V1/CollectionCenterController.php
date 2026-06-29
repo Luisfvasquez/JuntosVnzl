@@ -29,14 +29,16 @@ class CollectionCenterController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'center_name' => 'required|string|max:150',
-            'manager_name' => 'required|string|max:150',
+            'center_name' => 'required|string|max:150|regex:/^[\pL\s\-]+$/u',
+            'manager_name' => 'required|string|max:150|regex:/^[\pL\s\-]+$/u',
             'dni' => ['required', 'string', 'regex:/(V|E|J)-\d{5,9}/'],
             'phone' => ['required', 'string', 'regex:/^\+58(412|414|424|416|426|422)\d{7}$/'],
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
-            'address_description' => 'required|string',
+            'address_description' => 'required|string|not_regex:/[\{\}\<\>]/',
             'status' => 'sometimes|required|string|in:recibiendo_insumos,capacidad_maxima,distribuyendo,en_traslado,inactivo',
+            'audit_name' => 'required|string|max:150|regex:/^[\pL\s\-]+$/u',
+            'audit_phone' => 'required|string|max:20',
         ]);
 
         if ($validator->fails()) {
@@ -79,12 +81,12 @@ class CollectionCenterController extends Controller
         // Superadmin puede editar todo sin secure_token
         if ($isSuperadmin) {
             $validator = Validator::make($request->all(), [
-                'center_name' => 'sometimes|required|string|max:150',
-                'manager_name' => 'sometimes|required|string|max:150',
+                'center_name' => 'sometimes|required|string|max:150|regex:/^[\pL\s\-]+$/u',
+                'manager_name' => 'sometimes|required|string|max:150|regex:/^[\pL\s\-]+$/u',
                 'phone' => ['sometimes', 'required', 'string', 'regex:/^\+58(412|414|424|416|426|422)\d{7}$/'],
                 'latitude' => 'sometimes|required|numeric',
                 'longitude' => 'sometimes|required|numeric',
-                'address_description' => 'sometimes|required|string',
+                'address_description' => 'sometimes|required|string|not_regex:/[\{\}\<\>]/',
                 'status' => 'sometimes|required|string|in:recibiendo_insumos,capacidad_maxima,distribuyendo,en_traslado,inactivo',
             ]);
 
@@ -106,7 +108,7 @@ class CollectionCenterController extends Controller
             $validator = Validator::make($request->all(), [
                 'latitude' => 'sometimes|required|numeric',
                 'longitude' => 'sometimes|required|numeric',
-                'address_description' => 'sometimes|required|string',
+                'address_description' => 'sometimes|required|string|not_regex:/[\{\}\<\>]/',
                 'status' => 'sometimes|required|string|in:recibiendo_insumos,capacidad_maxima,distribuyendo,en_traslado,inactivo',
                 // Coordinator NO puede cambiar estos campos
                 'center_name' => 'prohibited',
@@ -139,11 +141,11 @@ class CollectionCenterController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'center_name' => 'sometimes|required|string|max:150',
-            'manager_name' => 'sometimes|required|string|max:150',
+            'center_name' => 'sometimes|required|string|max:150|regex:/^[\pL\s\-]+$/u',
+            'manager_name' => 'sometimes|required|string|max:150|regex:/^[\pL\s\-]+$/u',
             'latitude' => 'sometimes|required|numeric',
             'longitude' => 'sometimes|required|numeric',
-            'address_description' => 'sometimes|required|string',
+            'address_description' => 'sometimes|required|string|not_regex:/[\{\}\<\>]/',
             'status' => 'sometimes|required|string|in:recibiendo_insumos,capacidad_maxima,distribuyendo,en_traslado,inactivo',
             'dni' => 'prohibited',
             'phone' => 'prohibited',

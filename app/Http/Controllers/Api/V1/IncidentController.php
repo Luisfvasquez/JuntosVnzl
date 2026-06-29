@@ -28,13 +28,15 @@ class IncidentController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'reporter_name' => 'nullable|string|max:150',
-            'description' => 'required|string',
+            'reporter_name' => 'nullable|string|max:150|regex:/^[\pL\s\-]+$/u',
+            'description' => 'required|string|not_regex:/[\{\}\<\>]/',
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
-            'address_description' => 'required|string',
+            'address_description' => 'required|string|not_regex:/[\{\}\<\>]/',
             'severity' => 'nullable|string|in:leve,moderado,critico,catastrofico',
             'photo' => 'nullable|image|max:5120',
+            'audit_name' => 'required|string|max:150|regex:/^[\pL\s\-]+$/u',
+            'audit_phone' => 'required|string|max:20',
         ]);
 
         if ($validator->fails()) {

@@ -59,13 +59,13 @@ class PatientController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'hospital_id' => 'required|exists:hospitals,id',
-            'hospital_area' => 'nullable|string|max:150',
+            'hospital_area' => 'nullable|string|max:150|not_regex:/[\{\}\<\>]/',
             'dni' => 'nullable|string|max:20',
-            'first_name' => 'nullable|string|max:100',
-            'last_name' => 'nullable|string|max:100',
+            'first_name' => 'nullable|string|max:100|regex:/^[\pL\s\-]+$/u',
+            'last_name' => 'nullable|string|max:100|regex:/^[\pL\s\-]+$/u',
             'gender' => 'nullable|string|in:masculino,femenino,otro',
-            'approximate_age' => 'nullable|integer',
-            'physical_description' => 'nullable|string',
+            'approximate_age' => 'nullable|integer|min:0',
+            'physical_description' => 'nullable|string|not_regex:/[\{\}\<\>]/',
             'medical_status' => 'nullable|string|in:estable,critico,observacion,dado_de_alta,fallecido,trasladado,desconocido',
             'photo' => 'nullable|image|max:5120',
             'arrival_date' => 'nullable|date',
@@ -119,14 +119,14 @@ class PatientController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'first_name' => 'nullable|string|max:100',
-            'last_name' => 'nullable|string|max:100',
+            'first_name' => 'nullable|string|max:100|regex:/^[\pL\s\-]+$/u',
+            'last_name' => 'nullable|string|max:100|regex:/^[\pL\s\-]+$/u',
             'gender' => 'nullable|string|in:masculino,femenino,otro',
-            'approximate_age' => 'nullable|integer',
-            'physical_description' => 'nullable|string',
+            'approximate_age' => 'nullable|integer|min:0',
+            'physical_description' => 'nullable|string|not_regex:/[\{\}\<\>]/',
             'medical_status' => 'nullable|string|in:estable,critico,observacion,dado_de_alta,fallecido,trasladado,desconocido',
             'hospital_id' => 'required|exists:hospitals,id',
-            'hospital_area' => 'nullable|string|max:150',
+            'hospital_area' => 'nullable|string|max:150|not_regex:/[\{\}\<\>]/',
             'dni' => 'nullable|string|max:50',
             'photo' => 'nullable|image|max:5120',
             'arrival_date' => 'nullable|date',

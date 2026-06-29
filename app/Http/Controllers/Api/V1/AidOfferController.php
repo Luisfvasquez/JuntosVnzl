@@ -61,15 +61,15 @@ class AidOfferController extends Controller
         // Superadmin puede editar todo sin secure_token
         if ($isSuperadmin) {
             $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
-                'provider_name' => 'sometimes|required|string|max:150',
+                'provider_name' => 'sometimes|required|string|max:150|regex:/^[\pL\s\-]+$/u',
                 'dni' => 'sometimes|required|string|max:20',
                 'phone' => 'sometimes|required|string|max:20',
-                'title' => 'sometimes|required|string|max:200',
-                'description' => 'sometimes|required|string',
+                'title' => 'sometimes|required|string|max:200|not_regex:/[\{\}\<\>]/',
+                'description' => 'sometimes|required|string|not_regex:/[\{\}\<\>]/',
                 'category' => 'sometimes|required|string|in:comida,ropa,vivienda,salud,transporte,otros',
                 'latitude' => 'sometimes|required|numeric',
                 'longitude' => 'sometimes|required|numeric',
-                'address_description' => 'sometimes|required|string',
+                'address_description' => 'sometimes|required|string|not_regex:/[\{\}\<\>]/',
                 'status' => 'sometimes|required|string|in:disponible,reservado,entregado,expirado',
             ]);
 
@@ -89,15 +89,15 @@ class AidOfferController extends Controller
         // Coordinator puede editar: título, descripción, categoría, estado, coordenadas, y datos del proveedor
         if ($isCoordinator) {
             $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
-                'provider_name' => 'sometimes|required|string|max:150',
+                'provider_name' => 'sometimes|required|string|max:150|regex:/^[\pL\s\-]+$/u',
                 'dni' => 'sometimes|required|string|max:20',
                 'phone' => 'sometimes|required|string|max:20',
-                'title' => 'sometimes|required|string|max:200',
-                'description' => 'sometimes|required|string',
+                'title' => 'sometimes|required|string|max:200|not_regex:/[\{\}\<\>]/',
+                'description' => 'sometimes|required|string|not_regex:/[\{\}\<\>]/',
                 'category' => 'sometimes|required|string|in:comida,ropa,vivienda,salud,transporte,otros',
                 'latitude' => 'sometimes|required|numeric',
                 'longitude' => 'sometimes|required|numeric',
-                'address_description' => 'sometimes|required|string',
+                'address_description' => 'sometimes|required|string|not_regex:/[\{\}\<\>]/',
                 'status' => 'sometimes|required|string|in:disponible,reservado,entregado,expirado',
             ]);
 
@@ -120,12 +120,12 @@ class AidOfferController extends Controller
         }
 
         $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
-            'title' => 'sometimes|required|string|max:200',
-            'description' => 'sometimes|required|string',
+            'title' => 'sometimes|required|string|max:200|not_regex:/[\{\}\<\>]/',
+            'description' => 'sometimes|required|string|not_regex:/[\{\}\<\>]/',
             'category' => 'sometimes|required|string|in:comida,ropa,vivienda,salud,transporte,otros',
             'latitude' => 'sometimes|required|numeric',
             'longitude' => 'sometimes|required|numeric',
-            'address_description' => 'sometimes|required|string',
+            'address_description' => 'sometimes|required|string|not_regex:/[\{\}\<\>]/',
             'status' => 'sometimes|required|string|in:disponible,reservado,entregado,expirado',
         ]);
 

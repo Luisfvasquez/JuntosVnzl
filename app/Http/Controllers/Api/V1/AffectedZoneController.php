@@ -22,13 +22,15 @@ class AffectedZoneController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:150',
+            'name' => 'required|string|max:150|regex:/^[\pL\s\-]+$/u',
             'severity' => 'nullable|string|in:leve,moderada,grave,desastre_total',
-            'description' => 'nullable|string',
+            'description' => 'nullable|string|not_regex:/[\{\}\<\>]/',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
             'status' => 'nullable|string|in:activa,controlada,evacuada',
             'is_attended' => 'nullable|boolean',
+            'audit_name' => 'required|string|max:150|regex:/^[\pL\s\-]+$/u',
+            'audit_phone' => 'required|string|max:20',
         ]);
 
         if ($validator->fails()) {
@@ -76,10 +78,10 @@ class AffectedZoneController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'name' => 'sometimes|required|string|max:150',
+            'name' => 'sometimes|required|string|max:150|regex:/^[\pL\s\-]+$/u',
             'severity' => 'sometimes|required|string|in:leve,moderada,grave,desastre_total',
             'status' => 'sometimes|required|string|in:activa,controlada,evacuada',
-            'description' => 'sometimes|required|string',
+            'description' => 'sometimes|required|string|not_regex:/[\{\}\<\>]/',
             'latitude' => 'sometimes|required|numeric',
             'longitude' => 'sometimes|required|numeric',
             'is_attended' => 'sometimes|required|boolean',

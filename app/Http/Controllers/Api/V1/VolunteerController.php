@@ -40,17 +40,17 @@ class VolunteerController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'full_name' => 'required|string|max:150',
+            'full_name' => 'required|string|max:150|regex:/^[\pL\s\-]+$/u',
             'dni' => 'required|string|max:20',
             'phone' => ['required', 'string', 'regex:/^\+58(412|414|424|416|426)\d{7}$/'],
             'email' => 'nullable|email|max:150',
             'skill_category' => 'required|string|max:50',
-            'availability_description' => 'required|string|max:150',
+            'availability_description' => 'required|string|max:150|not_regex:/[\{\}\<\>]/',
             'modality' => 'required|string|in:presencial,virtual',
-            'location_description' => 'required|string',
+            'location_description' => 'required|string|not_regex:/[\{\}\<\>]/',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
-            'description' => 'required|string',
+            'description' => 'required|string|not_regex:/[\{\}\<\>]/',
             'photo' => 'nullable|image|max:5120',
         ]);
 
@@ -106,8 +106,8 @@ class VolunteerController extends Controller
 
         $validator = Validator::make($request->all(), [
             'status' => 'sometimes|required|string|in:disponible,asignado,inactivo',
-            'availability_description' => 'sometimes|required|string|max:150',
-            'location_description' => 'sometimes|required|string',
+            'availability_description' => 'sometimes|required|string|max:150|not_regex:/[\{\}\<\>]/',
+            'location_description' => 'sometimes|required|string|not_regex:/[\{\}\<\>]/',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
             'dni' => 'prohibited',

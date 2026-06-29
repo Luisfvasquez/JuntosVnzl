@@ -20,5 +20,7 @@ class Incident extends Model
         'aid_status',
         'aid_type_received',
         'verified_by_community_count',
+        'audit_name',
+        'audit_phone',
     ];
 }

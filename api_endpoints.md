@@ -54,7 +54,9 @@ Se envían únicamente los campos a modificar. **Nota:** `dni` y `phone` son inm
     "phone": "+584127654321",
     "latitude": 10.490000,
     "longitude": -66.890000,
-    "address_description": "Entrada principal, preguntar por Maria."
+    "address_description": "Entrada principal, preguntar por Maria.",
+    "audit_name": "Pedro Pérez",
+    "audit_phone": "+584121234567"
 }
 ```
 **Respuesta Exitosa (201):**
@@ -81,7 +83,9 @@ Actualización de campos (excepto DNI y teléfono). Permite actualizar el estado
     "latitude": 10.450000,
     "longitude": -66.920000,
     "address_description": "Autopista Regional del Centro, km 5.",
-    "severity": "critico"
+    "severity": "critico",
+    "audit_name": "Pedro Pérez",
+    "audit_phone": "+584121234567"
 }
 ```
 
@@ -228,6 +232,8 @@ Retorna todos los incidentes registrados para su renderizado en mapa.
 - `latitude` (numeric)
 - `longitude` (numeric)
 - `status` (string, opcional): 'activa', 'controlada', 'evacuada'
+- `audit_name` (string) - Requerido
+- `audit_phone` (string) - Requerido
 
 **Ejemplo de Respuesta Exitoso (201 Created):**
 ```json
@@ -284,6 +290,8 @@ Retorna todos los incidentes registrados para su renderizado en mapa.
 - `status` (string, max 50) - 'reportado', 'verificado'
 - `general_source` (string, max 255)
 - `notes` (string)
+- `audit_name` (string) - Requerido
+- `audit_phone` (string) - Requerido
 
 **Posibles Códigos de Error:**
 - **422 Unprocessable Entity:** Errores de validación.

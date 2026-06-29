@@ -25,15 +25,15 @@ class LostPetController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'reporter_name' => 'required|string|max:150',
+            'reporter_name' => 'required|string|max:150|regex:/^[\pL\s\-]+$/u',
             'contact_phone' => ['required', 'string', 'regex:/^\+58(412|414|424|416|426)\d{7}$/'],
-            'pet_name' => 'nullable|string|max:100',
+            'pet_name' => 'nullable|string|max:100|regex:/^[\pL\s\-]+$/u',
             'species' => 'nullable|string|in:perro,gato,otro',
-            'breed' => 'nullable|string|max:100',
-            'description' => 'nullable|string',
+            'breed' => 'nullable|string|max:100|not_regex:/[\{\}\<\>]/',
+            'description' => 'nullable|string|not_regex:/[\{\}\<\>]/',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
-            'address_description' => 'nullable|string',
+            'address_description' => 'nullable|string|not_regex:/[\{\}\<\>]/',
             'photo' => 'nullable|image|max:5120',
         ]);
 

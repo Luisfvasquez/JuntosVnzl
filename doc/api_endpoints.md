@@ -274,12 +274,14 @@ Lugares físicos donde se reciben y distribuyen insumos humanitarios.
       "phone": "+584127654321",
       "latitude": 10.490000,
       "longitude": -66.890000,
-      "address_description": "Entrada principal, preguntar por Maria."
+      "address_description": "Entrada principal, preguntar por Maria.",
+      "audit_name": "Pedro Pérez",
+      "audit_phone": "+584121234567"
   }
   ```
 * **Validaciones:**
   * Mismas expresiones regulares de DNI (`/(V|E|J)-\d{5,9}/`) y teléfono (`/^\+58(412|414|424|416|426)\d{7}$/`).
-  * Todos los campos del cuerpo son requeridos.
+  * Todos los campos del cuerpo son requeridos (incluyendo `audit_name` y `audit_phone`).
 * **Respuesta Exitosa (201 Created):** Retorna el centro registrado e incluye su `secure_token` único.
 
 #### Modificar Centro de Acopio
@@ -337,7 +339,9 @@ Reportes de daños estructurales, colapsos viales o emergencias climáticas.
       "latitude": 10.450000,
       "longitude": -66.920000,
       "address_description": "Autopista Regional del Centro, km 5.",
-      "severity": "critico"
+      "severity": "critico",
+      "audit_name": "Pedro Pérez",
+      "audit_phone": "+584121234567"
   }
   ```
 * **Validaciones:**
@@ -346,6 +350,8 @@ Reportes de daños estructurales, colapsos viales o emergencias climáticas.
   * `latitude` / `longitude`: Requeridos, numéricos.
   * `address_description`: Requerido, string.
   * `severity`: Opcional, string, enums: `leve`, `moderado`, `critico`, `catastrofico`. (Por defecto se asigna `moderado`).
+  * `audit_name`: Requerido, string.
+  * `audit_phone`: Requerido, string.
 
 ---
 

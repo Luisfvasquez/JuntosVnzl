@@ -18,6 +18,9 @@ class AffectedZone extends Model
         'longitude',
         'status',
         'is_attended',
+        'secure_token',
+        'audit_name',
+        'audit_phone',
     ];
 
     protected $casts = [

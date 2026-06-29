@@ -27,11 +27,11 @@ class HospitalController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:150',
+            'name' => 'required|string|max:150|regex:/^[\pL\s\-]+$/u',
             'type' => 'nullable|string|in:hospital_publico,clinica_privada,carpa_campana',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
-            'address_description' => 'required|string',
+            'address_description' => 'required|string|not_regex:/[\{\}\<\>]/',
             'status' => 'nullable|string|in:operativo,colapsado,sin_insumos,evacuado',
             'contact_phone' => 'nullable|string|max:20',
             'image' => 'nullable|image|max:5120' // Max 5MB
