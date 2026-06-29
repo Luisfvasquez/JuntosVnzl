@@ -25,6 +25,18 @@ class Evacuee extends Model
         'immediate_needs',
         'dependents_count',
         'looking_for',
+        'head_of_family_id',
+        'family_relationship',
         'status',
     ];
+
+    public function headOfFamily()
+    {
+        return $this->belongsTo(Evacuee::class, 'head_of_family_id');
+    }
+
+    public function familyMembers()
+    {
+        return $this->hasMany(Evacuee::class, 'head_of_family_id');
+    }
 }

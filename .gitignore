@@ -1,4 +1,5 @@
 *.log
+/.codegraph/
 .DS_Store
 .env
 .env.backup

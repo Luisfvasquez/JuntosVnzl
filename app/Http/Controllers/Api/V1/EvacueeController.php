@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Models\Evacuee;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Drivers\Gd\Driver;
@@ -44,7 +45,7 @@ class EvacueeController extends Controller
 
     public function show($id)
     {
-        $evacuee = Evacuee::find($id);
+        $evacuee = Evacuee::with(['familyMembers', 'headOfFamily'])->find($id);
 
         if (!$evacuee) {
             return response()->json(['success' => false, 'message' => 'Damnificado no encontrado'], 404);
@@ -75,6 +76,18 @@ class EvacueeController extends Controller
             'looking_for' => 'nullable|string',
             'status' => 'nullable|string|in:en_refugio,reubicado,desaparecido,fallecido',
             'photo' => 'nullable|image|max:5120',
+            'head_of_family_id' => 'nullable|exists:evacuees,id',
+            'family_relationship' => 'nullable|string|max:50',
+            'family_members' => 'nullable|array',
+            'family_members.*.first_name' => 'required_with:family_members|string|max:100',
+            'family_members.*.last_name' => 'nullable|string|max:100',
+            'family_members.*.dni' => 'nullable|string|max:50',
+            'family_members.*.age' => 'nullable|integer',
+            'family_members.*.gender' => 'nullable|string|in:masculino,femenino,otro',
+            'family_members.*.family_relationship' => 'nullable|string|max:50',
+            'family_members.*.special_conditions' => 'nullable|string',
+            'family_members.*.minor_medical_conditions' => 'nullable|string',
+            'family_members.*.photo' => 'nullable|image|max:5120',
         ]);
 
         if ($validator->fails()) {
@@ -95,13 +108,56 @@ class EvacueeController extends Controller
             $data['photo_url'] = Storage::disk('r2')->url($filename);
         }
 
-        $evacuee = Evacuee::create($data);
+        DB::beginTransaction();
+        try {
+            // Guardar al principal
+            $evacueeData = collect($data)->except('family_members')->toArray();
+            $evacuee = Evacuee::create($evacueeData);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Damnificado registrado exitosamente',
-            'data' => $evacuee,
-        ], 201);
+            // Guardar a los familiares (si existen)
+            if (!empty($data['family_members'])) {
+                foreach ($data['family_members'] as $index => $memberData) {
+                    $memberData['head_of_family_id'] = $evacuee->id;
+                    $memberData['current_location'] = $evacuee->current_location ?? null;
+                    $memberData['origin_address'] = $evacuee->origin_address ?? null;
+                    $memberData['latitude'] = $evacuee->latitude ?? null;
+                    $memberData['longitude'] = $evacuee->longitude ?? null;
+                    $memberData['status'] = $evacuee->status ?? null;
+
+                    // Manejo de foto del familiar
+                    if ($request->hasFile("family_members.{$index}.photo")) {
+                        $manager = new ImageManager(new Driver);
+                        $imageFile = $request->file("family_members.{$index}.photo");
+                        $image = $manager->decode($imageFile);
+                        $encoded = $image->encodeUsingFileExtension('webp', 80);
+                        
+                        $filename = 'evacuees/'.uniqid().'.webp';
+                        Storage::disk('r2')->put($filename, (string) $encoded);
+                        $memberData['photo_url'] = Storage::disk('r2')->url($filename);
+                    }
+
+                    Evacuee::create($memberData);
+                }
+            }
+
+            DB::commit();
+
+            $evacuee->load('familyMembers');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Damnificado(s) registrado(s) exitosamente',
+                'data' => $evacuee,
+            ], 201);
+            
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al registrar',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function update(Request $request, $id)
@@ -134,6 +190,8 @@ class EvacueeController extends Controller
             'looking_for' => 'nullable|string',
             'status' => 'nullable|string|in:en_refugio,reubicado,desaparecido,fallecido',
             'photo' => 'nullable|image|max:5120',
+            'head_of_family_id' => 'nullable|exists:evacuees,id',
+            'family_relationship' => 'nullable|string|max:50',
         ]);
 
         if ($validator->fails()) {

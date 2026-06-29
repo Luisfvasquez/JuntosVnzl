@@ -365,4 +365,44 @@ Retorna todos los incidentes registrados para su renderizado en mapa.
 ## 9. Autenticación (Fase II)
 
 * **Registro:** `POST /api/v1/auth/register` (Requiere `name`, `dni`, `phone`, `email`, `password`) - Retorna el `token` (JWT).
-* **Login:** `POST /api/v1/auth/login` (Requiere `dni`, `password`) - Retorna el `token` (JWT).
+## 10. Damnificados / Personas Evacuadas (`/evacuees`)
+
+### Listar Damnificados (GET)
+**Endpoint:** `GET /api/v1/evacuees`
+*Obtiene la lista de damnificados. Soporta filtros vía Query Params.*
+**Query Params Soportados:**
+- `dni`: Filtro exacto por DNI.
+- `name`: Búsqueda parcial (ILIKE) por nombre o apellido.
+- `status`: Filtro por estado ('en_refugio', 'reubicado', 'desaparecido', 'fallecido').
+- `current_location`: Búsqueda parcial por ubicación actual.
+
+### Registrar Damnificado y Grupo Familiar (POST)
+**Endpoint:** `POST /api/v1/evacuees`
+*Permite registrar a una persona afectada. Además, soporta el registro anidado de un grupo familiar completo en una sola petición, asignando automáticamente al primer registrado como el jefe de familia de los demás.*
+**Cuerpo de la petición (JSON o FormData):**
+- `first_name` (string) - Requerido
+- `last_name` (string, opcional)
+- `dni` (string, opcional)
+- `age` (integer, opcional)
+- `gender` (string, opcional)
+- `current_location` (string, opcional)
+- `status` (string, opcional): 'en_refugio', 'reubicado', 'desaparecido', 'fallecido'
+- `photo` (file, opcional)
+- `family_members` (array, opcional): Lista de familiares que acompañan o dependen de esta persona.
+  - `family_members[0][first_name]` (string) - Requerido si se envía array
+  - `family_members[0][family_relationship]` (string) - Relación (ej: "hijo", "esposo")
+  - `family_members[0][age]` (integer)
+  - `family_members[0][photo]` (file)
+
+**Ejemplo de Respuesta Exitoso (201 Created):**
+Retorna al damnificado principal con su relación `family_members` anidada, conteniendo a todos los familiares insertados bajo su cargo.
+
+### Ver Detalle de Damnificado (GET)
+**Endpoint:** `GET /api/v1/evacuees/{id}`
+Retorna los datos del damnificado. *Nota:* Incluye automáticamente los arrays `family_members` (si es jefe de hogar) y el objeto `head_of_family` (si este registro depende de otro).
+
+### Actualizar Damnificado (PUT) - Requiere Auth
+**Endpoint:** `PUT /api/v1/evacuees/{id}`
+**Headers Requeridos:** `Authorization: Bearer {token}` (Solo superadmin, admin o coordinator)
+**Cuerpo (JSON):**
+Permite actualizar campos individuales del damnificado, e incluso reasignar a qué familia pertenece enviando un `head_of_family_id` válido.
